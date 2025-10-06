@@ -1,1 +1,457 @@
-/* Add your CSS here */
+/* Body background */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(120deg, #f4f4f4 0%, #b86ffc 100%);
+}
+
+/* Hero section with blue gradient */
+.hero {
+  background: linear-gradient(135deg, #39a7fc 0%, #e0c3fc 100%);
+  color: white;
+  padding: 40px 0 30px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: blur(18px);
+  z-index: 0;
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Intel logo styling */
+.intel-logo {
+  width: 90px; /* Resize logo */
+  margin-bottom: 10px;
+}
+
+/* Main heading styling */
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 10px 0 10px 0;
+  letter-spacing: 1px;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+/* Underline below heading */
+.hero-underline {
+  width: 60px;
+  border: 2px solid #00baff;
+  margin: 16px auto 18px auto;
+  background: #00baff;
+}
+
+/* Subheading/description */
+.hero-desc {
+  font-size: 1.15rem;
+  max-width: 600px;
+  margin: 0 auto;
+  color: #111; /* Changed to black for better readability in light mode */
+}
+
+/* Moving liquid background for hero and timeline - more vibrant, multi-color, and wavy */
+.liquid-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Vibrant, multi-color animated gradient for a liquid look */
+  background: linear-gradient(120deg, #ff8ae2 0%, #a18cd1 30%, #39a7fc 60%, #fbc2eb 100%);
+  background-size: 200% 200%;
+  animation: animateGradient 8s ease-in-out infinite;
+  opacity: 0.85;
+}
+
+/* For timeline, set a fixed height */
+.timeline-liquid-bg {
+  height: 100%;
+  min-height: 320px;
+  max-height: 340px;
+  top: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+/* Timeline section */
+.timeline {
+  display: flex;
+  flex-direction: row; /* Arrange cards in a row */
+  flex-wrap: nowrap;   /* Prevent wrapping to next line */
+  overflow-x: auto;    /* Enable horizontal scrolling */
+  gap: 28px;
+  background: #f4f4f4;
+  padding: 40px 0 20px 0;
+  scroll-behavior: smooth; /* Smooth scrolling for arrow buttons */
+  /* Show only 5 cards at a time by limiting the width */
+  max-width: 1280px; /* 5 cards * 240px + 4 gaps * 28px = 1200 + 112 = 1312px, but 1280px is a common width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Timeline wrapper to hold arrows and timeline in a row */
+.timeline-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 1340px; /* timeline max-width + arrow button widths + gaps */
+  margin: 0 auto 0 auto;
+  gap: 10px;
+  position: relative; /* Added position relative */
+}
+
+/* Animated blobs for extra liquid effect - more colors and movement */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.55;
+  filter: blur(32px);
+  mix-blend-mode: lighten;
+  animation: moveBlob 14s linear infinite alternate;
+}
+
+.blob:nth-child(1) {
+  width: 260px;
+  height: 260px;
+  background: #ff8ae2;
+  top: 10%;
+  left: 5%;
+  animation-delay: 0s;
+}
+.blob:nth-child(2) {
+  width: 200px;
+  height: 200px;
+  background: #39a7fc;
+  top: 60%;
+  left: 60%;
+  animation-delay: 2s;
+}
+.blob:nth-child(3) {
+  width: 180px;
+  height: 180px;
+  background: #fbc2eb;
+  top: 30%;
+  left: 75%;
+  animation-delay: 4s;
+}
+.blob:nth-child(4) {
+  width: 140px;
+  height: 140px;
+  background: #a18cd1;
+  top: 70%;
+  left: 20%;
+  animation-delay: 6s;
+}
+
+@keyframes animateGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes moveBlob {
+  0% { transform: translateY(0) scale(1) rotate(0deg);}
+  33% { transform: translateY(30px) scale(1.15) rotate(10deg);}
+  66% { transform: translateY(-20px) scale(0.95) rotate(-8deg);}
+  100% { transform: translateY(0) scale(1) rotate(0deg);}
+}
+
+/* Timeline card styling */
+.timeline-card {
+  /* Apply the same gradient background as the highlight card for all cards */
+  background: linear-gradient(135deg, rgba(0, 119, 255, 0.70) 0%, rgba(255, 0, 255, 0.40) 100%);
+  color: #fff;
+  border-radius: 28px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
+  border: 1.5px solid #b8b8b8;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  flex: 0 0 240px; /* Do not shrink, fixed width */
+  margin: 0 0 20px 0;
+  padding: 0 0 16px 0;
+  text-align: left;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+/* Highlighted card (keep border-radius slightly larger for distinction if desired) */
+.highlight-card {
+  /* ...existing code... */
+  border-radius: 32px;
+}
+
+/* Card heading styles */
+.timeline-card h2,
+.highlight-card h2 {
+  font-size: 1.3rem;
+  color: #fff;
+  margin: 0 0 4px 0;
+  font-weight: bold;
+}
+
+/* Make the "1985" on card 4 (highlight-card) a special color in both light and dark mode */
+.highlight-card h2 {
+  color: #7bbcff;
+}
+
+.timeline-card h3 {
+  font-size: 1.05rem;
+  margin: 0 0 10px 0;
+  font-weight: bold;
+  color: #fff; /* White for contrast on gradient */
+}
+
+.highlight-card h2,
+.highlight-card h3 {
+  color: #fff;
+}
+
+/* Card image styling - fill the entire card */
+.card-img {
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 18px 18px 0 0;
+  margin: 0;
+  background: #e0e0e0;
+  display: block;
+  transition: opacity 0.3s;
+  /* Place image at the top of the card */
+}
+
+/* Make the card content stack vertically */
+.timeline-card {
+  /* ...existing code... */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 0 16px 0;
+  overflow: hidden;
+}
+
+/* Place headings and text inside a content wrapper for easier hiding/showing */
+.timeline-card-content {
+  padding: 18px 16px 16px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Hide the paragraph text and headings by default */
+.timeline-card h2,
+.timeline-card h3,
+.timeline-card p {
+  display: none;
+}
+
+/* On hover: hide the image, show the content */
+.timeline-card:hover .card-img {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.timeline-card:hover h2,
+.timeline-card:hover h3,
+.timeline-card:hover p {
+  display: block;
+}
+
+/* Card hover effect */
+.timeline-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  transform: translateY(-4px) scale(1.03);
+  z-index: 1;
+}
+
+/* Timeline instructions */
+.timeline-instructions {
+  text-align: center;
+  color: #181818; /* Darker for better readability in light mode */
+  font-size: 1rem;
+  margin: 18px 0 30px 0;
+  background: rgba(255,255,255,0.35);
+  border-radius: 18px;
+  padding: 8px 18px;
+  margin: 18px auto 30px auto;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Arrow button styles */
+.timeline-arrow-btn {
+  background: rgba(255,255,255,0.35);
+  color: #2566a8;
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: 0 2px 8px rgba(31, 38, 135, 0.10);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.timeline-arrow-btn:active {
+  background: rgba(0,119,255,0.18);
+  color: #fff;
+}
+
+/* Hide scroll bar for a cleaner look (optional for beginners) */
+.timeline {
+  scrollbar-width: thin;
+  scrollbar-color: #2566a8 #e0e0e0;
+}
+.timeline::-webkit-scrollbar {
+  height: 8px;
+}
+.timeline::-webkit-scrollbar-thumb {
+  background: #2566a8;
+  border-radius: 4px;
+}
+.timeline::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+
+/* Light/Dark mode toggle button styling */
+.theme-toggle-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 100;
+  background: #2566a8;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.theme-toggle-btn:active {
+  background: #17416b;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background: linear-gradient(120deg, #181c24 0%, #2b3a4b 100%);
+  color: #e0e0e0;
+}
+
+/* Change hero section for dark mode */
+body.dark-mode .hero {
+  background: linear-gradient(135deg, #232a36 0%, #7b4397 100%);
+}
+body.dark-mode .hero::before {
+  background: rgba(24,28,36,0.45);
+}
+body.dark-mode .hero-desc {
+  color: #fff;
+}
+
+/* Change timeline background for dark mode */
+body.dark-mode .timeline {
+  background: transparent;
+}
+
+/* Change timeline card for dark mode */
+body.dark-mode .timeline-card,
+body.dark-mode .highlight-card {
+  background: linear-gradient(135deg, rgba(123, 67, 151, 0.55) 0%, rgba(0, 119, 255, 0.25) 100%);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.22);
+}
+body.dark-mode .timeline-card h2,
+body.dark-mode .highlight-card h2 {
+  color: #7bbcff;
+}
+body.dark-mode .timeline-card h3,
+body.dark-mode .highlight-card h3 {
+  color: #e0e0e0;
+}
+body.dark-mode .timeline-card p,
+body.dark-mode .highlight-card p {
+  color: #bfc9d1;
+}
+body.dark-mode .highlight-card {
+  background: linear-gradient(135deg, rgba(123, 67, 151, 0.55) 0%, rgba(0, 119, 255, 0.25) 100%);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+body.dark-mode .highlight-card h2,
+body.dark-mode .highlight-card h3 {
+  color: #fff;
+}
+body.dark-mode .highlight-card p {
+  color: #c7e0ff;
+}
+
+/* Change scroll bar color for dark mode */
+body.dark-mode .timeline {
+  scrollbar-color: #7bbcff #232a36;
+}
+body.dark-mode .timeline::-webkit-scrollbar-thumb {
+  background: #7bbcff;
+}
+body.dark-mode .timeline::-webkit-scrollbar-track {
+  background: #232a36;
+}
+
+/* Change arrow button color for dark mode */
+body.dark-mode .timeline-arrow-btn,
+body.dark-mode .theme-toggle-btn {
+  background: rgba(36, 40, 56, 0.55);
+  color: #7bbcff;
+  border: 1px solid rgba(255,255,255,0.10);
+}
+body.dark-mode .timeline-arrow-btn:active,
+body.dark-mode .theme-toggle-btn:active {
+  background: rgba(123, 67, 151, 0.25);
+  color: #fff;
+}
+
+/* Responsive: stack cards on small screens */
+@media (max-width: 900px) {
+  .timeline {
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .timeline-card {
+    width: 90vw;
+    max-width: 340px;
+    min-width: 220px;
+  }
+}
+
+/* Add comments to help students understand each part of the code */
+body.dark-mode .timeline-instructions {
+  color: #fff;
+}
+
+ii
