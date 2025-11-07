@@ -375,6 +375,28 @@ body.dark-mode .year-2022 h2 { color: #8a2be2; }
 body.dark-mode .year-2023 h2 { color: #ff7f00; }
 body.dark-mode .year-2024 h2 { color: #ff0000; }
 
+/* Completely different solid background colors for each card (overrides gradient) */
+.year-1968 { background: #d97706 !important; }    /* Burnt orange */
+.year-1971 { background: #0d9488 !important; }    /* Teal */
+.year-1978 { background: #b91c1c !important; }    /* Crimson */
+.year-1985 { background: #1e3a8a !important; }    /* Navy */
+.year-2006 { background: #7c3aed !important; }    /* Violet */
+.year-2020 { background: #4d7c0f !important; }    /* Olive green */
+.year-2022 { background: #be185d !important; }    /* Magenta */
+.year-2023 { background: #15803d !important; }    /* Forest green */
+.year-2024 { background: #db2777 !important; }    /* Deep pink */
+
+/* Dark mode versions (darker shades for contrast) */
+body.dark-mode .year-1968 { background: #92400e !important; }
+body.dark-mode .year-1971 { background: #0a5d55 !important; }
+body.dark-mode .year-1978 { background: #7f1010 !important; }
+body.dark-mode .year-1985 { background: #132753 !important; }
+body.dark-mode .year-2006 { background: #5525a1 !important; }
+body.dark-mode .year-2020 { background: #2f4d06 !important; }
+body.dark-mode .year-2022 { background: #7a0f3d !important; }
+body.dark-mode .year-2023 { background: #0e5227 !important; }
+body.dark-mode .year-2024 { background: #8d1649 !important; }
+
 /* Timeline instructions */
 .timeline-instructions {
   text-align: center;
@@ -570,5 +592,13 @@ body.dark-mode .theme-toggle-btn:active {
   }
   .timeline-card-content p {
     font-size: 0.85rem;
+  }
+  .theme-toggle-btn,
+  body.dark-mode .theme-toggle-btn {
+    /* 35% smaller than desktop values */
+    font-size: 0.8rem;      /* 1.2rem * 0.65 ≈ 0.78rem (rounded) */
+    padding: 5px 12px;      /* 8px & 18px reduced */
+    border-radius: 13px;    /* 20px * 0.65 */
+    gap: 5px;               /* 8px * 0.65 */
   }
 }
