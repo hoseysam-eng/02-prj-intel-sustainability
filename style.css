@@ -229,9 +229,9 @@ body {
 
 /* Card image styling - fill the entire card */
 .card-img {
-  /* FIX: Use a fixed height so the image does not cover the entire card */
+  /* Reduce image height by ~20% so it no longer fills the whole card */
   width: 100%;
-  height: 100%;           /* Fill the card height */
+  height: 80%;           /* Fill the card height */
   object-fit: cover;
   border-radius: 18px 18px 0 0;
   margin: 0;
@@ -527,38 +527,48 @@ body.dark-mode .theme-toggle-btn:active {
   color: #fff;
 }
 
-/* Responsive: stack cards on small screens */
+/* Responsive: keep the same horizontal form on small screens */
 @media (max-width: 900px) {
+  .timeline-wrapper {
+    /* Make wrapper span full mobile width */
+    max-width: 100%;
+    width: 100%;
+    padding: 0 8px;
+    box-sizing: border-box;
+  }
   .timeline {
-    flex-wrap: wrap;
-    gap: 18px;
+    /* Expand to full width instead of desktop max-width */
+    max-width: 100%;
+    width: 100%;
+    margin: 0;                 /* Remove side auto margins */
+    padding: 24px 8px 12px 8px; /* Slight horizontal padding */
+    gap: 16px;                  /* Slightly larger gap for wider feel */
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
   }
   .timeline-card {
-    width: 90vw;
-    max-width: 340px;
+    /* Widen cards a bit to match expanded timeline */
+    flex: 0 0 220px;
     min-width: 220px;
+    height: 280px;
+    min-height: 280px;
+  }
+  .timeline-card.expanded {
+    transform: scale(1.05); /* Slightly larger scale since cards are wider */
+  }
+  .card-img {
+    height: 80%; /* Keep reduced image height */
+  }
+  .timeline-card h2 {
+    font-size: 1.04rem;
+  }
+  .timeline-card h3 {
+    font-size: 0.9rem;
+  }
+  .timeline-card-content {
+    padding: 12px;
+  }
+  .timeline-card-content p {
+    font-size: 0.85rem;
   }
 }
-
-/* Individual card title colors (we give each year a different color) */
-/* Students: Each rule targets the h2 inside the card with that year class */
-.year-1968 h2 { color: #ff0000; }  /* Red */
-.year-1971 h2 { color: #ff7f00; }  /* Orange */
-.year-1978 h2 { color: #ffff00; }  /* Yellow */
-.year-1985 h2 { color: #00b347; }  /* Green */
-.year-2006 h2 { color: #0066ff; }  /* Blue */
-.year-2020 h2 { color: #4b0082; }  /* Indigo */
-.year-2022 h2 { color: #8a2be2; }  /* Violet */
-.year-2023 h2 { color: #ff7f00; }  /* Orange (repeat to fill 9 cards) */
-.year-2024 h2 { color: #ff0000; }  /* Red (repeat to fill 9 cards) */
-
-/* Dark mode: same rainbow colors */
-body.dark-mode .year-1968 h2 { color: #ff0000; }
-body.dark-mode .year-1971 h2 { color: #ff7f00; }
-body.dark-mode .year-1978 h2 { color: #ffff00; }
-body.dark-mode .year-1985 h2 { color: #00b347; }
-body.dark-mode .year-2006 h2 { color: #0066ff; }
-body.dark-mode .year-2020 h2 { color: #4b0082; }
-body.dark-mode .year-2022 h2 { color: #8a2be2; }
-body.dark-mode .year-2023 h2 { color: #ff7f00; }
-body.dark-mode .year-2024 h2 { color: #ff0000; }
