@@ -53,8 +53,9 @@
     </div>
     <section class="timeline" id="timeline">
       <!-- Card 1: 1968 -->
-      <div class="timeline-card">
-        <img src="img/1.jpg" alt="Intel Founded" class="card-img" />
+      <div class="timeline-card year-1968">
+        <!-- Each image now uses a year SVG. Make sure the SVG files exist in /img -->
+        <img src="img/1968.svg" alt="1968" class="card-img" />
         <div class="timeline-card-content">
           <h2>1968</h2>
           <h3>Intel Founded</h3>
@@ -66,8 +67,8 @@
         </div>
       </div>
       <!-- Card 2: 1971 -->
-      <div class="timeline-card">
-        <img src="img/2.jpg" alt="First Microprocessor" class="card-img" />
+      <div class="timeline-card year-1971">
+        <img src="img/1971.svg" alt="1971" class="card-img" />
         <div class="timeline-card-content">
           <h2>1971</h2>
           <h3>First Microprocessor</h3>
@@ -79,8 +80,8 @@
         </div>
       </div>
       <!-- Card 3: 1978 -->
-      <div class="timeline-card">
-        <img src="img/3.jpg" alt="8086 Processor" class="card-img" />
+      <div class="timeline-card year-1978">
+        <img src="img/1978.svg" alt="1978" class="card-img" />
         <div class="timeline-card-content">
           <h2>1978</h2>
           <h3>8086 Processor</h3>
@@ -91,8 +92,8 @@
         </div>
       </div>
       <!-- Card 4: 1985 -->
-      <div class="timeline-card highlight-card">
-        <img src="img/4.jpg" alt="386 Processor" class="card-img" />
+      <div class="timeline-card highlight-card year-1985">
+        <img src="img/1985.svg" alt="1985" class="card-img" />
         <div class="timeline-card-content">
           <h2>1985</h2>
           <h3>386 Processor</h3>
@@ -105,9 +106,8 @@
       </div>
 
       <!-- Card 5: 2006 -->
-      <div class="timeline-card">
-        <!-- Simple SVG image with clear text -->
-        <img src="img/5.svg" alt="Peak GHG Emissions" class="card-img" />
+      <div class="timeline-card year-2006">
+        <img src="img/2006.svg" alt="2006" class="card-img" />
         <div class="timeline-card-content">
           <h2>2006</h2>
           <h3>Peak GHG Emissions</h3>
@@ -121,8 +121,8 @@
       </div>
 
       <!-- Card 6: 2020 -->
-      <div class="timeline-card">
-        <img src="img/6.svg" alt="RISE Strategy" class="card-img" />
+      <div class="timeline-card year-2020">
+        <img src="img/2020.svg" alt="2020" class="card-img" />
         <div class="timeline-card-content">
           <h2>2020</h2>
           <h3>RISE Strategy</h3>
@@ -135,8 +135,8 @@
       </div>
 
       <!-- Card 7: 2022 -->
-      <div class="timeline-card">
-        <img src="img/7.svg" alt="Net-Zero By 2040" class="card-img" />
+      <div class="timeline-card year-2022">
+        <img src="img/2022.svg" alt="2022" class="card-img" />
         <div class="timeline-card-content">
           <h2>2022</h2>
           <h3>Net-Zero By 2040</h3>
@@ -149,8 +149,8 @@
       </div>
 
       <!-- Card 8: 2023 -->
-      <div class="timeline-card">
-        <img src="img/8.svg" alt="Renewable Electricity" class="card-img" />
+      <div class="timeline-card year-2023">
+        <img src="img/2023.svg" alt="2023" class="card-img" />
         <div class="timeline-card-content">
           <h2>2023</h2>
           <h3>Renewable Electricity</h3>
@@ -163,8 +163,8 @@
       </div>
 
       <!-- Card 9: 2024 -->
-      <div class="timeline-card">
-        <img src="img/9.svg" alt="Sustainability Summit" class="card-img" />
+      <div class="timeline-card year-2024">
+        <img src="img/2024.svg" alt="2024" class="card-img" />
         <div class="timeline-card-content">
           <h2>2024</h2>
           <h3>Sustainability Summit</h3>
@@ -208,6 +208,65 @@
       }
       if (event.key === 'ArrowRight') {
         timeline.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    });
+  </script>
+  <!-- Smooth expand/collapse when a card is selected -->
+  <script>
+    // Make timeline cards clickable and keyboard-accessible
+    const cards = document.querySelectorAll('.timeline-card');
+
+    // Helper: expand a card and collapse others
+    function toggleExpand(card) {
+      const willExpand = !card.classList.contains('expanded');
+
+      // Collapse all cards first
+      cards.forEach(c => {
+        c.classList.remove('expanded');
+        c.setAttribute('aria-expanded', 'false');
+      });
+
+      // Expand the clicked one (if it was not already expanded)
+      if (willExpand) {
+        card.classList.add('expanded');
+        card.setAttribute('aria-expanded', 'true');
+        // Scroll the expanded card into view smoothly
+        card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }
+
+    // Initialize accessibility attributes and event handlers
+    cards.forEach(card => {
+      // These attributes help keyboard users
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-expanded', 'false');
+
+      // Click to expand/collapse
+      card.addEventListener('click', () => toggleExpand(card));
+
+      // Keyboard: Enter or Space to toggle, Escape to close
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleExpand(card);
+        }
+        if (e.key === 'Escape') {
+          cards.forEach(c => {
+            c.classList.remove('expanded');
+            c.setAttribute('aria-expanded', 'false');
+          });
+        }
+      });
+    });
+
+    // Click outside any card to collapse all
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.timeline-card')) {
+        cards.forEach(c => {
+          c.classList.remove('expanded');
+          c.setAttribute('aria-expanded', 'false');
+        });
       }
     });
   </script>

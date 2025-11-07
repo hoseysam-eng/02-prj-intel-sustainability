@@ -185,9 +185,10 @@ body {
   margin: 0 0 20px 0;
   padding: 0 0 16px 0;
   text-align: left;
-  transition: box-shadow 0.2s, transform 0.2s;
-  position: relative;
-  min-height: 320px;
+  transition: box-shadow 0.2s, transform 0.2s, flex-basis 0.3s ease, min-height 0.3s ease;
+  position: relative;     /* Needed for the overlay to sit inside the card */
+  height: 320px;          /* Fixed height so the page height never changes */
+  min-height: 320px;      /* Keep minimum same for safety */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -228,17 +229,15 @@ body {
 
 /* Card image styling - fill the entire card */
 .card-img {
+  /* FIX: Use a fixed height so the image does not cover the entire card */
   width: 100%;
-  height: 100%;
-  min-height: 180px;
-  max-height: 220px;
+  height: 100%;           /* Fill the card height */
   object-fit: cover;
   border-radius: 18px 18px 0 0;
   margin: 0;
   background: #e0e0e0;
-  display: block;
+  display: block; /* Ensure it renders as a block element */
   transition: opacity 0.3s;
-  /* Place image at the top of the card */
 }
 
 /* Make the card content stack vertically */
@@ -251,11 +250,24 @@ body {
   overflow: hidden;
 }
 
-/* Place headings and text inside a content wrapper for easier hiding/showing */
+/* Details overlay: sits on top of the image but does not change card height */
 .timeline-card-content {
-  padding: 18px 16px 16px 16px;
-  width: 100%;
+  position: absolute;     /* Make it an overlay */
+  inset: 0;               /* Fill the card */
   box-sizing: border-box;
+  padding: 18px 16px 16px 16px;
+  overflow: auto;         /* If text is long, scroll inside the overlay */
+  opacity: 0;             /* Hidden by default */
+  pointer-events: none;   /* Don’t capture clicks until shown */
+  transition: opacity 0.25s ease;
+  text-align: center; /* Center all headings and paragraph text */
+}
+
+/* Optional: ensure paragraphs do not stretch oddly */
+.timeline-card-content p {
+  /* Center paragraph block and limit width a bit for readability */
+  margin: 0 auto;
+  max-width: 90%;
 }
 
 /* Hide the paragraph text and headings by default */
@@ -277,12 +289,91 @@ body {
   display: block;
 }
 
+/* Show overlay on hover or when selected without changing layout height */
+.timeline-card:hover .timeline-card-content,
+.timeline-card.expanded .timeline-card-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* Card hover effect */
 .timeline-card:hover {
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   transform: translateY(-4px) scale(1.03);
   z-index: 1;
 }
+
+/* Smooth transition when a card expands (clicked) */
+.timeline-card {
+  /* ...existing code... */
+  transition: box-shadow 0.2s, transform 0.2s, flex-basis 0.3s ease, min-height 0.3s ease;
+}
+
+/* Expanded (selected) card state */
+.timeline-card.expanded {
+  /* Keep the same height so the background doesn't shift */
+  min-height: 320px; /* same as base card */
+  height: 320px;       /* Lock height to avoid layout jump */
+  /* Make the card feel selected by scaling it slightly */
+  transform: scale(1.06);
+  z-index: 2; /* Keep on top of neighbors while expanding */
+  /* Avoid extra hover lift when expanded */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hide the image and show content when expanded */
+.timeline-card.expanded .card-img {
+  opacity: 0;            /* Fades out smoothly (image already has transition) */
+  pointer-events: none;  /* Disable interactions with the image */
+}
+.timeline-card.expanded h2,
+.timeline-card.expanded h3,
+.timeline-card.expanded p {
+  display: block; /* Reveal text when expanded */
+}
+
+/* Optional: clear hover transform when expanded */
+.timeline-card.expanded:hover {
+  /* Keep the same transform on hover to avoid extra jump */
+  transform: scale(1.06);
+}
+
+/* Keyboard focus ring to see which card is focused */
+.timeline-card[role="button"]:focus {
+  outline: 3px solid #00baff;
+  outline-offset: 3px;
+}
+
+/* Make expanded card a bit taller on small screens */
+@media (max-width: 900px) {
+  .timeline-card.expanded {
+    /* Keep height stable on small screens too */
+    min-height: 320px;
+    height: 320px;
+  }
+}
+
+/* Rainbow title colors for each year (students: these set the h2 color) */
+.year-1968 h2 { color: #ff0000; }  /* Red */
+.year-1971 h2 { color: #ff7f00; }  /* Orange */
+.year-1978 h2 { color: #ffff00; }  /* Yellow */
+.year-1985 h2 { color: #00b347; }  /* Green */
+.year-2006 h2 { color: #0066ff; }  /* Blue */
+.year-2020 h2 { color: #4b0082; }  /* Indigo */
+.year-2022 h2 { color: #8a2be2; }  /* Violet */
+.year-2023 h2 { color: #ff7f00; }  /* Orange (repeat to fill 9 cards) */
+.year-2024 h2 { color: #ff0000; }  /* Red (repeat to fill 9 cards) */
+
+/* Dark mode: same rainbow colors */
+body.dark-mode .year-1968 h2 { color: #ff0000; }
+body.dark-mode .year-1971 h2 { color: #ff7f00; }
+body.dark-mode .year-1978 h2 { color: #ffff00; }
+body.dark-mode .year-1985 h2 { color: #00b347; }
+body.dark-mode .year-2006 h2 { color: #0066ff; }
+body.dark-mode .year-2020 h2 { color: #4b0082; }
+body.dark-mode .year-2022 h2 { color: #8a2be2; }
+body.dark-mode .year-2023 h2 { color: #ff7f00; }
+body.dark-mode .year-2024 h2 { color: #ff0000; }
 
 /* Timeline instructions */
 .timeline-instructions {
@@ -449,7 +540,25 @@ body.dark-mode .theme-toggle-btn:active {
   }
 }
 
-/* Add comments to help students understand each part of the code */
-body.dark-mode .timeline-instructions {
-  color: #fff;
-}
+/* Individual card title colors (we give each year a different color) */
+/* Students: Each rule targets the h2 inside the card with that year class */
+.year-1968 h2 { color: #ff0000; }  /* Red */
+.year-1971 h2 { color: #ff7f00; }  /* Orange */
+.year-1978 h2 { color: #ffff00; }  /* Yellow */
+.year-1985 h2 { color: #00b347; }  /* Green */
+.year-2006 h2 { color: #0066ff; }  /* Blue */
+.year-2020 h2 { color: #4b0082; }  /* Indigo */
+.year-2022 h2 { color: #8a2be2; }  /* Violet */
+.year-2023 h2 { color: #ff7f00; }  /* Orange (repeat to fill 9 cards) */
+.year-2024 h2 { color: #ff0000; }  /* Red (repeat to fill 9 cards) */
+
+/* Dark mode: same rainbow colors */
+body.dark-mode .year-1968 h2 { color: #ff0000; }
+body.dark-mode .year-1971 h2 { color: #ff7f00; }
+body.dark-mode .year-1978 h2 { color: #ffff00; }
+body.dark-mode .year-1985 h2 { color: #00b347; }
+body.dark-mode .year-2006 h2 { color: #0066ff; }
+body.dark-mode .year-2020 h2 { color: #4b0082; }
+body.dark-mode .year-2022 h2 { color: #8a2be2; }
+body.dark-mode .year-2023 h2 { color: #ff7f00; }
+body.dark-mode .year-2024 h2 { color: #ff0000; }
