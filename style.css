@@ -85,7 +85,7 @@ body {
   left: 0;
   right: 0;
   position: absolute;
-  z-index: 0;
+  z-index: -1; /* was brought above; push it back below the ::before oval */
 }
 
 /* Timeline section */
@@ -96,12 +96,21 @@ body {
   overflow-x: auto;    /* Enable horizontal scrolling */
   gap: 28px;
   background: #f4f4f4;
-  padding: 40px 0 20px 0;
-  scroll-behavior: smooth; /* Smooth scrolling for arrow buttons */
+  padding: 40px 18px 20px 18px; /* Add left/right padding so cards don't sit on the edge */
+  scroll-padding-left: 18px;    /* Keep a safe gutter when scrolling programmatically */
+  scroll-padding-right: 18px;
   /* Show only 5 cards at a time by limiting the width */
   max-width: 1280px; /* 5 cards * 240px + 4 gaps * 28px = 1200 + 112 = 1312px, but 1280px is a common width */
   margin-left: auto;
   margin-right: auto;
+  background: transparent; /* We changed this from solid gray to transparent */
+  scroll-snap-type: x mandatory; /* snap along x axis */
+}
+
+/* Snap scrolling: make each card align to the left edge so it never hides */
+.timeline-card {
+  scroll-snap-align: start;      /* align card start to the left edge */
+  scroll-snap-stop: always;      /* stop at each card for clarity */
 }
 
 /* Timeline wrapper to hold arrows and timeline in a row */
@@ -113,6 +122,42 @@ body {
   margin: 0 auto 0 auto;
   gap: 10px;
   position: relative; /* Added position relative */
+}
+
+/* Draw a big oval shape behind the cards */
+.timeline-wrapper::before {
+  content: "";
+  position: absolute;
+  /* Stretch across the wrapper */
+  inset: 0;
+  /* Give extra height so it feels oval (tall + rounded) */
+  padding: 40px 0;
+  /* Light translucent background so cards stand out */
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 1000px;        /* Huge radius makes it an oval */
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 0;                   /* Keep it behind everything */
+  pointer-events: none;         /* Ignore mouse clicks */
+}
+
+/* Only lift timeline and arrows (not the liquid bg) above the oval */
+.timeline,
+.timeline-arrow-btn {
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure the liquid background stays behind everything */
+.timeline-liquid-bg {
+  z-index: -2 !important; /* keep it below the oval and cards */
+}
+
+/* Dark mode version of the oval */
+body.dark-mode .timeline-wrapper::before {
+  background: rgba(36, 40, 56, 0.55);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 /* Animated blobs for extra liquid effect - more colors and movement */
@@ -563,7 +608,9 @@ body.dark-mode .theme-toggle-btn:active {
     max-width: 100%;
     width: 100%;
     margin: 0;                 /* Remove side auto margins */
-    padding: 24px 8px 12px 8px; /* Slight horizontal padding */
+    padding: 24px 16px 12px 16px; /* Slightly larger side padding on mobile */
+    scroll-padding-left: 16px;
+    scroll-padding-right: 16px;
     gap: 16px;                  /* Slightly larger gap for wider feel */
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;

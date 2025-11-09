@@ -188,11 +188,19 @@
     const leftBtn = document.getElementById('timeline-left');
     const rightBtn = document.getElementById('timeline-right');
 
-    // Scroll amount in pixels
-    const scrollAmount = 260;
+    // Scroll amount based on card width + gap, so we move one card at a time
+    let scrollAmount = 260; // default fallback
+    const firstCard = document.querySelector('.timeline-card');
+    if (firstCard && timeline) {
+      const cardWidth = firstCard.getBoundingClientRect().width; // includes responsive width
+      const gap = parseInt(getComputedStyle(timeline).gap) || 0;
+      scrollAmount = Math.round(cardWidth + gap);
+    }
 
     // Scroll left when left arrow button is clicked
     leftBtn.addEventListener('click', function() {
+      // Prevent trying to scroll past the start
+      if (timeline.scrollLeft <= 0) return;
       timeline.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     });
 
@@ -204,6 +212,7 @@
     // Allow arrow keys to scroll the timeline
     document.addEventListener('keydown', function(event) {
       if (event.key === 'ArrowLeft') {
+        if (timeline.scrollLeft <= 0) return;
         timeline.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
       }
       if (event.key === 'ArrowRight') {
