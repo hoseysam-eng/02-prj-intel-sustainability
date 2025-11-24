@@ -1347,32 +1347,130 @@ html, body {
   }
 }
 
-/* Extra Small Mobile (Portrait): 320px – 480px */
-@media (max-width: 480px) {
-  .timeline-card {
-    flex: 0 0 85vw;      /* Card is 85% of viewport width */
-    width: 85vw;
-    max-width: 220px;    /* Never exceed 220px */
-    min-width: 120px;    /* Minimum readable size */
-    margin: 0 auto;      /* Center card in timeline */
-    box-sizing: border-box;
-  }
-  .timeline {
-    gap: 8px;            /* Small gap between cards */
-    padding-left: 0;
-    padding-right: 0;
-  }
+/* Footer container: reduce padding and spacing to match nav bar */
+.site-footer {
+  margin-top: 24px;                /* Less space above footer */
+  background: #ffffff;
+  position: relative;
+  color: #003C6A;
+  padding: 16px 0 12px 0;          /* Match nav vertical padding */
+  overflow: hidden;
+  border-top: 1px solid #e2e6ea;   /* Keep divider */
 }
 
-/* Small Mobile (Landscape): 481px – 600px */
-@media (min-width: 481px) and (max-width: 600px) {
-  .timeline-card {
-    height: 200px;
-    min-height: 200px;
-    max-width: 100vw;
-    width: 100vw;
-  }
+/* Footer inner: match nav-inner max-width and horizontal padding */
+.footer-inner {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;                       /* Less gap between sections */
+  padding: 0 18px;                 /* Match nav-inner horizontal padding */
+  box-sizing: border-box;
 }
 
-/* Tablet portrait: 601px–768px */
-@media (min-width: 601px) and
+/* Branding: reduce gap */
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;                        /* Less gap */
+}
+
+/* Footer logo: match nav logo size */
+.footer-logo {
+  width: 70px;                     /* Same as nav logo */
+  padding: 6px;
+  border-radius: 6px;
+  display: block;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* Tagline: reduce font size and margin */
+.footer-tagline {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #003C6A;
+  font-weight: 500;
+}
+
+/* Columns: reduce gap and font size */
+.footer-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;                       /* Less gap */
+}
+
+.footer-col {
+  min-width: 120px;
+  flex: 1;
+}
+
+.footer-col h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  color: #003C6A;
+}
+
+.footer-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-col li {
+  margin: 4px 0;
+}
+
+.footer-col a {
+  color: #003C6A;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+
+.footer-col a:hover {
+  text-decoration: underline;
+  color: #0068B5;
+}
+
+/* Legal: reduce padding and font size */
+.footer-legal {
+  border-top: 1px solid rgba(255,255,255,0.35);
+  padding-top: 8px;
+  font-size: 0.7rem;
+  color: #003C6A;
+}
+
+/* Mobile: reduce padding and gaps further */
+@media (max-width: 700px) {
+  .site-footer {
+    padding: 12px 0 8px 0;
+  }
+  .footer-inner {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .footer-logo {
+    width: 56px;
+    padding: 4px;
+  }
+  .footer-tagline {
+    font-size: 0.75rem;
+  }
+  .footer-columns {
+    gap: 8px;
+  }
+  .footer-col h4 {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+  .footer-col a {
+    font-size: 0.7rem;
+  }
+  .footer-legal {
+    font-size: 0.65rem;
+    padding-top: 6px;
+  }
+}
