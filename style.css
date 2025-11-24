@@ -2,23 +2,47 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(120deg, #f4f4f4 0%, #b86ffc 100%);
+  /* Simple light gradient (top to bottom) */
+  background:
+    linear-gradient(180deg, #fdfefe 0%, #f6faff 55%, #eef6ff 100%);
+  color: #20262d; /* readable dark text on light background */
+}
+
+/* Add very soft pastel glow behind content (does not block clicks) */
+body::before {
+  content: "";
+  position: fixed;     /* stays while scrolling */
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 55% 40%, rgba(123,188,255,0.22) 0%, rgba(123,188,255,0.08) 34%, transparent 62%),
+    radial-gradient(circle at 70% 35%, rgba(186,160,255,0.18) 0%, rgba(186,160,255,0.06) 46%, transparent 72%);
+}
+
+/* Dark mode keeps the existing deeper background and glow */
+body.dark-mode {
+  background:
+    linear-gradient(160deg, #020912 0%, #041123 50%, #061a2d 100%);
+  color: #d5e6f3;
+}
+body.dark-mode::before {
+  background:
+    radial-gradient(circle at 55% 40%, rgba(0,150,230,0.40) 0%, rgba(0,150,230,0.10) 34%, transparent 62%),
+    radial-gradient(circle at 70% 35%, rgba(110,50,240,0.36) 0%, rgba(110,50,240,0.08) 48%, transparent 72%);
 }
 
 /* Hero section with blue gradient */
 .hero {
-  background: #0068B5;
+  background: transparent;              /* no separate background */
   position: relative;
   padding-top: 24px; /* add space below the nav */
 }
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.15);
-  backdrop-filter: blur(18px);
-  z-index: 0;
+/* Hide the animated gradient layer inside the hero */
+.hero .liquid-background {
+  display: none;
 }
+
 .hero-content {
   position: relative;
   z-index: 1;
@@ -100,13 +124,12 @@ body {
   flex-wrap: nowrap;   /* Prevent wrapping to next line */
   overflow-x: auto;    /* Enable horizontal scrolling */
   gap: 28px;
-  background: #ffffff;
-  border: 1px solid #e2e6ea;
-  border-radius: 12px;
-  padding: 30px 0 18px 0;
-  scroll-behavior: smooth; /* Smooth scrolling for arrow buttons */
-  /* Show only 5 cards at a time by limiting the width */
-  max-width: 1280px; /* 5 cards * 240px + 4 gaps * 28px = 1200 + 112 = 1312px, but 1280px is a common width */
+  background: transparent;              /* no panel, same as page */
+  border: none;                         /* remove border line */
+  border-radius: 0;                     /* no special container rounding */
+  padding: 30px 0 18px 0;               /* use normal padding */
+  overflow: visible;                    /* avoid clipping cards */
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -128,7 +151,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 1340px; /* timeline max-width + arrow button widths + gaps */
+  max-width: 1200px; /* timeline max-width + arrow button widths + gaps */
   margin: 0 auto 0 auto;
   gap: 10px;
   position: relative; /* Added position relative */
@@ -454,6 +477,29 @@ body.dark-mode .timeline.no-overlays.has-expanded {
   margin-top: 26px; /* gentle shift */
 }
 
+/* === Timeline instructions: match nav bar styling === */
+/* Light mode: white surface + subtle top border (no blur/shadow) */
+.timeline-instructions {
+  background: #ffffff;
+  border: none;                         /* remove old full border */
+  border-top: 1px solid #e2e6ea;       /* subtle divider like the nav */
+  border-radius: 6px;                  /* softer corners */
+  box-shadow: none;                    /* remove drop shadow */
+  backdrop-filter: none;               /* no glass blur for beginners */
+  color: #003C6A;                      /* readable on white */
+}
+
+/* Dark mode: dark surface + subtle top border (no blur/shadow) */
+body.dark-mode .timeline-instructions {
+  background: #1f2a33;
+  border: none;
+  border-top: 1px solid #2e3c46;
+  border-radius: 6px;
+  box-shadow: none;
+  backdrop-filter: none;
+  color: #cfe4ff;
+}
+
 /* Arrow button styles */
 .timeline-arrow-btn {
   background: #ffffff;
@@ -490,725 +536,50 @@ body.dark-mode .timeline.no-overlays.has-expanded {
   border-radius: 4px;
 }
 
-/* Light/Dark mode toggle button styling */
-.theme-toggle-btn {
-  position: fixed;
-  top: 70px;        /* push below the nav bar */
-  right: 18px;
-  z-index: 300;     /* higher than .site-nav (which is 200) */
-  background: #0068B5;
-  color: #fff;
-  border: 1px solid #005C9F;
-  border-radius: 20px;
-  padding: 8px 18px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  transition: background 0.2s, color 0.2s;
+/* Simple flex wrapper for toggle + CTA */
+.nav-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 14px;
+}
+
+/* Theme toggle inside nav (no fixed positioning) */
+.theme-toggle-btn {
+  position: static;          /* remove fixed */
+  top: auto;
+  right: auto;
+  z-index: auto;
+  background: #0068B5;
+  color: #ffffff;
+  border: 1px solid #005C9F;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transition: background 0.2s;
 }
 .theme-toggle-btn:active {
   background: #004A86;
 }
-
-/* On small screens, give a bit more space below the nav */
-@media (max-width: 700px) {
-  .theme-toggle-btn {
-    top: 88px;
-  }
-  .hero {
-    padding-top: 32px;
-  }
-}
-
-/* Dark mode styles */
-body.dark-mode {
-  background: #121B24;
-  color: #e0e6eb;
-}
-
-/* Change hero section for dark mode */
-body.dark-mode .hero {
-  background: #003C6A;
-}
-body.dark-mode .hero::before {
-  background: rgba(0,0,0,0.35);
-}
-body.dark-mode .hero-desc {
-  color: #ffffff;
-}
-
-/* Change timeline background for dark mode */
-body.dark-mode .timeline {
-  background: #1f2a33;
-  border-color: #2e3c46;
-}
-
-/* Change timeline card for dark mode */
-body.dark-mode .timeline-card,
-body.dark-mode .highlight-card {
-  background: #1f2a33;
-  border-color: #2e3c46;
-  color: #cfe4ff;
-}
-body.dark-mode .timeline-card h2,
-body.dark-mode .highlight-card h2 {
-  color: #7bbcff;
-}
-body.dark-mode .timeline-card h3,
-body.dark-mode .highlight-card h3 {
-  color: #cfe4ff;
-}
-body.dark-mode .timeline-card p,
-body.dark-mode .highlight-card p {
-  color: #b9c8d6;
-}
-body.dark-mode .highlight-card {
-  background: #004A86;
-  border-color: #003C6A;
-}
-body.dark-mode .highlight-card h2,
-body.dark-mode .highlight-card h3 {
-  color: #ffffff;
-}
-body.dark-mode .highlight-card p {
-  color: #c7e0ff;
-}
-
-/* Change scroll bar color for dark mode */
-body.dark-mode .timeline {
-  scrollbar-color: #7bbcff #232a36;
-}
-body.dark-mode .timeline::-webkit-scrollbar-thumb {
-  background: #7bbcff;
-}
-body.dark-mode .timeline::-webkit-scrollbar-track {
-  background: #232a36;
-}
-
-/* Change arrow button color for dark mode */
-body.dark-mode .timeline-arrow-btn,
-body.dark-mode .theme-toggle-btn {
-  background: #1f2a33;
-  border-color: #2e3c46;
-  color: #7bbcff;
-}
-body.dark-mode .timeline-arrow-btn:active,
-body.dark-mode .theme-toggle-btn:active {
-  background: #004A86;
-  color: #fff;
-}
-
-/* Dark mode: Nav bar theme */
-body.dark-mode .site-nav {
-  background: #1f2a33;           /* dark surface */
-  border-bottom: 1px solid #2e3c46;
-}
-
-body.dark-mode .nav-links a {
-  color: #cfe4ff;                /* light link text */
-}
-body.dark-mode .nav-links a:hover {
-  color: #7bbcff;                /* Intel light blue on hover */
-  text-decoration: underline;
-}
-
-/* Dark mode: Learn More button styled to match */
-body.dark-mode .nav-cta {
-  background: #004A86;
-  color: #ffffff;
-  border: 1px solid #003C6A;
-}
-body.dark-mode .nav-cta:hover {
-  background: #0068B5;
-}
-
-/* Always keep timeline horizontal */
-.timeline {
-  flex-wrap: nowrap;        /* never wrap */
-  overflow-x: auto;         /* allow sideways scrolling */
-}
-
-/* Mobile & tablets: keep horizontal scroll with fixed card width */
-@media (max-width: 900px) {
-  .timeline {
-    flex-wrap: nowrap;      /* override any earlier wrap */
-    overflow-x: auto;
-  }
-  .timeline-card {
-    flex: 0 0 240px;        /* fixed size for smooth horizontal scroll */
-    width: 240px;
-  }
-}
-
-/* Small phones: override earlier 88vw width rule */
-@media (max-width: 480px) {
-  .timeline {
-    flex-wrap: nowrap;
-  }
-  .timeline-card {
-    flex: 0 0 240px;
-    width: 240px;
-  }
-}
-
-/* Footer container */
-.site-footer {
-  margin-top: 50px;
-  background: #003C6A;
-  position: relative;
-  color: #fff;
-  padding: 40px 20px 30px 20px;
-  overflow: hidden;
-}
-
-/* Frosted overlay for subtle glass effect */
-.site-footer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.footer-inner {
-  position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-/* Branding */
-.footer-brand {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.footer-logo {
-  width: 80px;
-}
-
-.footer-tagline {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #f5faff;
-}
-
-/* Columns */
-.footer-columns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 28px;
-}
-
-.footer-col {
-  min-width: 140px;
-  flex: 1;
-}
-
-.footer-col h4 {
-  margin: 0 0 10px 0;
-  font-size: 1rem;
-  color: #ffffff;
-}
-
-.footer-col ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.footer-col li {
-  margin: 6px 0;
-}
-
-.footer-col a {
-  color: #f5faff;
-  text-decoration: none;
-  font-size: 0.85rem;
-}
-
-.footer-col a:hover {
-  text-decoration: underline;
-}
-
-/* Legal */
-.footer-legal {
-  border-top: 1px solid rgba(255,255,255,0.35);
-  padding-top: 14px;
-  font-size: 0.75rem;
-  color: #eef6ff;
-}
-
-.footer-legal a {
-  color: #eef6ff;
-  text-decoration: none;
-}
-
-.footer-legal a:hover {
-  text-decoration: underline;
-}
-
-/* Mobile */
-@media (max-width: 700px) {
-  .footer-columns {
-    flex-direction: column;
-  }
-  .footer-col {
-    width: 100%;
-  }
-}
-
-/* Dark mode footer adjustment */
-body.dark-mode .site-footer {
-  background: #003C6A;
-}
-body.dark-mode .site-footer::before {
-  background: rgba(0,0,0,0.35);
-}
-body.dark-mode .footer-col a,
-body.dark-mode .footer-tagline,
-body.dark-mode .footer-legal,
-body.dark-mode .footer-legal a {
-  color: #cfe4ff;
-}
-
-/* ================= Intel-inspired Theme Overrides (added at end) ================= */
-/* Body: lighter neutral background */
-body {
-  background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
-  color: #222;
-  font-family: Arial, sans-serif;
-}
-
-/* Hero: solid Intel blue with subtle dark overlay for depth */
-.hero {
-  background: #0068B5;
-  position: relative;
-}
-.hero::before {
-  background: rgba(0,0,0,0.15);
-}
-.hero h1 {
-  letter-spacing: 0.5px;
-}
-.hero-underline {
-  border-color: #00AEEF;
-  background: #00AEEF;
-}
-.hero-desc {
-  color: #f5f5f5;
-}
-
-/* Navigation bar */
-.site-nav {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e6ea;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-}
-.nav-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 10px 18px;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-.nav-logo {
-  width: 70px;
-}
-.nav-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 24px;
-  flex: 1;
-}
-.nav-links a {
-  text-decoration: none;
-  color: #003C6A;
-  font-size: 0.9rem;
-  padding: 6px 4px;
-}
-.nav-links a:hover {
-  color: #0068B5;
-  text-decoration: underline;
-}
-.nav-cta {
-  background: #0068B5;
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  text-decoration: none; /* remove underline */
-  display: inline-block; /* keeps it button-like */
-}
-.nav-cta:hover {
-  background: #004A86;
-  color: #fff;
-  text-decoration: none; /* keep no underline on hover */
-}
-.nav-cta:focus,
-.nav-cta:active {
-  text-decoration: none; /* keep no underline on focus/active */
-}
-
-/* Light mode: add a blue badge behind the white nav logo so it’s visible */
-.site-nav .nav-logo {
-  background: #0068B5;  /* Intel blue */
-  padding: 6px;         /* small space around logo */
-  border-radius: 6px;   /* soft corners */
-  display: block;       /* stable layout */
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-}
-
-/* Dark mode: no badge needed because the nav is dark */
-body.dark-mode .site-nav .nav-logo {
-  background: transparent;
-  box-shadow: none;
-}
-
-/* Timeline container background simplified */
-.timeline {
-  background: #ffffff;
-  border: 1px solid #e2e6ea;
-  border-radius: 12px;
-  padding: 30px 0 18px 0;
-}
-
-/* Cards: flat white, subtle border, soft shadow */
-.timeline-card {
-  background: #ffffff;
-  border: 1px solid #d9dee2;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  color: #003C6A;
-  border-radius: 28px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
-  border: 1.5px solid #b8b8b8;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  flex: 0 0 240px; /* Do not shrink, fixed width */
-  margin: 0 0 20px 0;
-  padding: 0 0 16px 0;
-  text-align: left;
-  transition: box-shadow 0.2s, transform 0.2s;
-  position: relative;
-  min-height: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  overflow: hidden;
-  will-change: transform, box-shadow, opacity;
-  transition: transform 0.55s cubic-bezier(.16,.84,.44,1),
-             box-shadow 0.55s cubic-bezier(.16,.84,.44,1),
-             background 0.60s ease,
-             opacity 0.45s ease;
-}
-
-/* Highlighted card (keep border-radius slightly larger for distinction if desired) */
-.highlight-card {
-  background: #0068B5;
-  border: 1px solid #005C9F;
-  color: #ffffff;
-  border-radius: 32px;
-}
-
-/* Card heading styles */
-.timeline-card h2,
-.highlight-card h2 {
-  font-size: 1.3rem;
-  color: #0068B5;
-  margin: 0 0 4px 0;
-  font-weight: bold;
-}
-
-/* Make the "1985" on card 4 (highlight-card) a special color in both light and dark mode */
-.highlight-card h2 {
-  color: #7bbcff;
-}
-
-.timeline-card h3 {
-  font-size: 1.05rem;
-  margin: 0 0 10px 0;
-  font-weight: bold;
-  color: #003C6A;
-}
-
-.highlight-card h2,
-.highlight-card h3 {
-  color: #ffffff;
-}
-
-/* Card image styling - fill the entire card */
-.card-img {
-  width: 100%;
-  height: 100%;
-  min-height: 180px;
-  max-height: 220px;
-  object-fit: cover;
-  border-radius: 18px 18px 0 0;
-  margin: 0;
-  background: #e0e0e0;
-  display: block;
-  transition: opacity 0.50s ease;
-  /* Place image at the top of the card */
-}
-
-/* Make the card content stack vertically */
-.timeline-card {
-  /* ...existing code... */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0 0 16px 0;
-  overflow: hidden;
-}
-
-/* Place headings and text inside a content wrapper for easier hiding/showing */
-.timeline-card-content {
-  padding: 18px 16px 16px 16px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Hide the paragraph text and headings by default */
-.timeline-card h2,
-.timeline-card h3,
-.timeline-card p {
-  display: none;
-}
-
-/* On hover: hide the image, show the content */
-.timeline-card:hover .card-img {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.timeline-card:hover h2,
-.timeline-card:hover h3,
-.timeline-card:hover p {
-  display: block;
-}
-
-/* Show paragraph ONLY when hovered with mouse or expanded */
-.timeline-card p {
-  display: none;
-}
-.timeline-card:hover p,
-.timeline-card.expanded p {
-  display: block;
-}
-
-/* Prevent keyboard focus (arrow key selection) from showing paragraph unless expanded */
-.timeline-card:focus:not(.expanded) p {
-  display: none;
-}
-
-/* If you also want headings always visible, remove their hiding:
-   Uncomment below if desired for constant heading visibility.
-   .timeline-card h2,
-   .timeline-card h3 { display:block; } */
-
-/* Ensure expanded state reveals headings and paragraph */
-.timeline-card.expanded h2,
-.timeline-card.expanded h3,
-.timeline-card.expanded p {
-  display: block;
-}
-
-/* Card hover effect */
-.timeline-card:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  transform: translateY(-4px) scale(1.03);
-  z-index: 1;
-}
-
-/* Smoother transitions for cards */
-.timeline-card {
-  /* ...existing code... */
-  will-change: transform, box-shadow, opacity;
-  transition: transform 0.55s cubic-bezier(.16,.84,.44,1),
-             box-shadow 0.55s cubic-bezier(.16,.84,.44,1),
-             background 0.60s ease,
-             opacity 0.45s ease;
-}
-
-/* Expanded (selected) state: a bit more scale for emphasis */
-.timeline-card.expanded {
-  transform: translateY(-6px) scale(1.06);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.22);
-  z-index: 2;
-}
-
-/* Keyboard focus: show a simple outline so selected card is clear */
-.timeline-card:focus {
-  outline: 3px solid #00AEEF;   /* Intel light blue */
+.theme-toggle-btn:focus {
+  outline: 2px solid #7bbcff;
   outline-offset: 2px;
 }
 
-/* Fix: when card is expanded (via keyboard or click), do not blur the content */
-.timeline-card.expanded::after {
-  /* remove the frosted overlay that was blurring content */
-  content: none;
+/* Dark mode version */
+body.dark-mode .theme-toggle-btn {
+  background: #1f2a33;
+  border-color: #2e3c46;
+  color: #7bbcff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
 }
-
-/* Soft glow overlay when expanded */
-.timeline-card.expanded::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(4px);
-  opacity: 0;
-  animation: expandGlow 0.60s ease forwards;
-}
-
-@keyframes expandGlow {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Smooth image fade when expanded */
-.timeline-card.expanded .card-img {
-  opacity: 0;
-}
-
-/* Timeline background softening when a card is expanded */
-.timeline.has-expanded {
-  background: rgba(255,255,255,0.42);
-  filter: drop-shadow(0 4px 22px rgba(0,0,0,0.15));
-  transition: background 0.60s ease, filter 0.60s ease;
-}
-
-/* Dark mode version of softened background */
-body.dark-mode .timeline.has-expanded {
-  background: rgba(36,40,56,0.60);
-  filter: drop-shadow(0 4px 26px rgba(0,0,0,0.40));
-}
-
-/* Remove overlays (card glow + softened timeline background) when keyboard arrow keys are used */
-.timeline.no-overlays .timeline-card.expanded::after {
-  content: none;               /* no glow / blur */
-}
-
-.timeline.no-overlays.has-expanded {
-  background: #ffffff;         /* keep original plain background */
-  filter: none;                /* remove drop shadow filter */
-}
-
-body.dark-mode .timeline.no-overlays.has-expanded {
-  background: #1f2a33;         /* plain dark background in dark mode */
-  filter: none;
-}
-
-/* Reduced motion accessibility: shorten transitions */
-@media (prefers-reduced-motion: reduce) {
-  .timeline-card,
-  .timeline-card .card-img,
-  .timeline-card.expanded,
-  .timeline.has-expanded {
-    transition: none;
-    animation: none;
-  }
-}
-
-/* Timeline instructions */
-.timeline-instructions {
-  text-align: center;
-  color: #003C6A;
-  font-size: 1rem;
-  margin: 18px 0 30px 0;
-  background: #ffffff;
-  border: 1px solid #e2e6ea;
-  border-radius: 18px;
-  padding: 8px 18px;
-  margin: 18px auto 30px auto;
-  width: fit-content;
-  box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  overflow: hidden;
-  max-height: 54px; /* initial compact height */
-  transition: max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;
-}
-/* Expand smoothly when a card is selected (timeline gets has-expanded) */
-.timeline.has-expanded ~ .timeline-instructions {
-  max-height: 120px;
-  padding: 12px 22px;
-  margin-top: 26px; /* gentle shift */
-}
-
-/* Arrow button styles */
-.timeline-arrow-btn {
-  background: #ffffff;
-  border: 1px solid #d9dee2;
-  color: #0068B5;
-  box-shadow: 0 2px 8px rgba(31, 38, 135, 0.10);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
-  transition: background 0.2s, color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.timeline-arrow-btn:active {
-  background: #0068B5;
-  color: #fff;
-}
-
-/* Hide scroll bar for a cleaner look (optional for beginners) */
-.timeline {
-  scrollbar-width: thin;
-  scrollbar-color: #2566a8 #e0e0e0;
-}
-.timeline::-webkit-scrollbar {
-  height: 8px;
-}
-.timeline::-webkit-scrollbar-thumb {
-  background: #2566a8;
-  border-radius: 4px;
-}
-.timeline::-webkit-scrollbar-track {
-  background: #e0e0e0;
-  border-radius: 4px;
-}
-
-/* Light/Dark mode toggle button styling */
-.theme-toggle-btn {
-  position: fixed;
-  top: 70px;        /* push below the nav bar */
-  right: 18px;
-  z-index: 300;     /* higher than .site-nav (which is 200) */
-  background: #0068B5;
-  color: #fff;
-  border: 1px solid #005C9F;
-  border-radius: 20px;
-  padding: 8px 18px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  transition: background 0.2s, color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.theme-toggle-btn:active {
+body.dark-mode .theme-toggle-btn:active {
   background: #004A86;
+  color: #fff;
 }
 
 /* On small screens, give a bit more space below the nav */
@@ -1229,10 +600,10 @@ body.dark-mode {
 
 /* Change hero section for dark mode */
 body.dark-mode .hero {
-  background: #003C6A;
+  background: transparent;
 }
 body.dark-mode .hero::before {
-  background: rgba(0,0,0,0.35);
+  display: none;
 }
 body.dark-mode .hero-desc {
   color: #ffffff;
@@ -1240,8 +611,8 @@ body.dark-mode .hero-desc {
 
 /* Change timeline background for dark mode */
 body.dark-mode .timeline {
-  background: #1f2a33;
-  border-color: #2e3c46;
+  background: transparent;
+  border-color: transparent;
 }
 
 /* Change timeline card for dark mode */
@@ -1479,539 +850,256 @@ body.dark-mode .footer-legal a {
   color: #cfe4ff;
 }
 
-/* ================= Intel-inspired Theme Overrides (added at end) ================= */
-/* Body: lighter neutral background */
+/* === Dark navy background with soft cyan + purple glow (image-inspired) === */
+/* We override earlier body backgrounds; keeping it simple for beginners */
 body {
-  background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
-  color: #222;
-  font-family: Arial, sans-serif;
+  /* Fallback solid color */
+  background: #061425;
+  color: #e9f2f9; /* slightly softer white for readability */
+  /* Main smooth dark gradient */
+  background:
+    linear-gradient(160deg, #030b17 0%, #061425 55%, #0a1d31 100%);
 }
 
-/* Hero: solid Intel blue with subtle dark overlay for depth */
+/* Add glow effect behind content */
+body::before {
+  content: "";
+  position: fixed;     /* stays put while user scrolls */
+  inset: 0;
+  pointer-events: none; /* do not block clicks */
+  z-index: -1;          /* behind everything */
+  background:
+    radial-gradient(circle at 55% 40%, rgba(0,180,255,0.35) 0%, rgba(0,180,255,0.08) 32%, transparent 60%),
+    radial-gradient(circle at 70% 35%, rgba(120,60,255,0.32) 0%, rgba(120,60,255,0.07) 45%, transparent 70%);
+  /* Gentle blur via box-shadow imitation (no filter needed for beginners) */
+}
+
+/* Dark mode keeps similar base but slightly deeper */
+body.dark-mode {
+  background:
+    linear-gradient(160deg, #020912 0%, #041123 50%, #061a2d 100%);
+  color: #d5e6f3;
+}
+body.dark-mode::before {
+  background:
+    radial-gradient(circle at 55% 40%, rgba(0,150,230,0.40) 0%, rgba(0,150,230,0.10) 34%, transparent 62%),
+    radial-gradient(circle at 70% 35%, rgba(110,50,240,0.36) 0%, rgba(110,50,240,0.08) 48%, transparent 72%);
+}
+
+/* (Optional) If hero blue feels too bright on new dark background, lightly soften its edges */
 .hero {
-  background: #0068B5;
-  position: relative;
+  /* ...existing code... */
+  box-shadow: 0 0 40px rgba(0,180,255,0.15);
+}
+body.dark-mode .hero {
+  /* ...existing code... */
+  box-shadow: 0 0 40px rgba(0,150,230,0.18);
+}
+
+/* Ensure timeline background remains crisp (no change needed, just a reminder) */
+/* ...existing code... */
+
+/* === Make hero and timeline use the same background as the page === */
+/* Hero: remove its solid blue and overlay so the page background shows */
+.hero {
+  background: transparent;              /* no separate background */
 }
 .hero::before {
-  background: rgba(0,0,0,0.15);
+  display: none;                        /* hide the dark overlay */
 }
-.hero h1 {
-  letter-spacing: 0.5px;
-}
-.hero-underline {
-  border-color: #00AEEF;
-  background: #00AEEF;
-}
-.hero-desc {
-  color: #f5f5f5;
+/* Hide the animated gradient layer inside the hero */
+.hero .liquid-background {
+  display: none;
 }
 
-/* Navigation bar */
-.site-nav {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e6ea;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-}
-.nav-inner {
+/* Timeline: remove white panel so it matches the page background */
+.timeline {
+  background: transparent;              /* no panel, same as page */
+  border: none;                         /* remove border line */
+  border-radius: 0;                     /* no special container rounding */
+  padding: 30px 0 18px 0;               /* use normal padding */
+  overflow: visible;                    /* avoid clipping cards */
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 10px 18px;
-  display: flex;
-  align-items: center;
-  gap: 24px;
+  margin-left: auto;
+  margin-right: auto;
 }
-.nav-logo {
-  width: 70px;
-}
-.nav-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 24px;
-  flex: 1;
-}
-.nav-links a {
-  text-decoration: none;
-  color: #003C6A;
-  font-size: 0.9rem;
-  padding: 6px 4px;
-}
-.nav-links a:hover {
-  color: #0068B5;
-  text-decoration: underline;
-}
-.nav-cta {
-  background: #0068B5;
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  text-decoration: none; /* remove underline */
-  display: inline-block; /* keeps it button-like */
-}
-.nav-cta:hover {
-  background: #004A86;
-  color: #fff;
-  text-decoration: none; /* keep no underline on hover */
-}
-.nav-cta:focus,
-.nav-cta:active {
-  text-decoration: none; /* keep no underline on focus/active */
+/* Hide the animated gradient layer behind the timeline */
+.timeline-liquid-bg {
+  display: none;
 }
 
-/* Light mode: add a blue badge behind the white nav logo so it’s visible */
-.site-nav .nav-logo {
-  background: #0068B5;  /* Intel blue */
-  padding: 6px;         /* small space around logo */
-  border-radius: 6px;   /* soft corners */
-  display: block;       /* stable layout */
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-}
-
-/* Dark mode: no badge needed because the nav is dark */
-body.dark-mode .site-nav .nav-logo {
+/* Dark mode: keep the same behavior (transparent hero and timeline) */
+body.dark-mode .hero {
   background: transparent;
+}
+body.dark-mode .hero::before {
+  display: none;
+}
+body.dark-mode .timeline {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Note: Cards and footer remain unchanged */
+
+/* === Nav bar: match unified dark background (transparent + blur) === */
+.site-nav {
+  background: transparent;               /* let page gradient show */
+  border-bottom: 1px solid rgba(255,255,255,0.15); /* soft divider line */
+  backdrop-filter: blur(8px);            /* gentle glass effect */
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Logo: remove badge since nav is now transparent */
+.site-nav .nav-logo {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
   box-shadow: none;
 }
 
-/* Timeline container background simplified */
-.timeline {
-  background: #ffffff;
-  border: 1px solid #e2e6ea;
-  border-radius: 12px;
-  padding: 30px 0 18px 0;
+/* Links: light text for contrast */
+.nav-links a {
+  color: #e9f2f9;
 }
-
-/* Cards: flat white, subtle border, soft shadow */
-.timeline-card {
-  background: #ffffff;
-  border: 1px solid #d9dee2;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  color: #003C6A;
-  border-radius: 28px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
-  border: 1.5px solid #b8b8b8;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  flex: 0 0 240px; /* Do not shrink, fixed width */
-  margin: 0 0 20px 0;
-  padding: 0 0 16px 0;
-  text-align: left;
-  transition: box-shadow 0.2s, transform 0.2s;
-  position: relative;
-  min-height: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  overflow: hidden;
-  will-change: transform, box-shadow, opacity;
-  transition: transform 0.55s cubic-bezier(.16,.84,.44,1),
-             box-shadow 0.55s cubic-bezier(.16,.84,.44,1),
-             background 0.60s ease,
-             opacity 0.45s ease;
-}
-
-/* Highlighted card (keep border-radius slightly larger for distinction if desired) */
-.highlight-card {
-  background: #0068B5;
-  border: 1px solid #005C9F;
-  color: #ffffff;
-  border-radius: 32px;
-}
-
-/* Card heading styles */
-.timeline-card h2,
-.highlight-card h2 {
-  font-size: 1.3rem;
-  color: #0068B5;
-  margin: 0 0 4px 0;
-  font-weight: bold;
-}
-
-/* Make the "1985" on card 4 (highlight-card) a special color in both light and dark mode */
-.highlight-card h2 {
+.nav-links a:hover {
   color: #7bbcff;
+  text-decoration: underline;
 }
 
-.timeline-card h3 {
-  font-size: 1.05rem;
-  margin: 0 0 10px 0;
-  font-weight: bold;
-  color: #003C6A;
-}
-
-.highlight-card h2,
-.highlight-card h3 {
+/* CTA button: keep Intel blue, add slight shadow for separation */
+.nav-cta {
+  background: #0068B5;
   color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+.nav-cta:hover {
+  background: #004A86;
 }
 
-/* Card image styling - fill the entire card */
-.card-img {
-  width: 100%;
-  height: 100%;
-  min-height: 180px;
-  max-height: 220px;
-  object-fit: cover;
-  border-radius: 18px 18px 0 0;
-  margin: 0;
-  background: #e0e0e0;
-  display: block;
-  transition: opacity 0.50s ease;
-  /* Place image at the top of the card */
-}
-
-/* Make the card content stack vertically */
-.timeline-card {
-  /* ...existing code... */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0 0 16px 0;
-  overflow: hidden;
-}
-
-/* Place headings and text inside a content wrapper for easier hiding/showing */
-.timeline-card-content {
-  padding: 18px 16px 16px 16px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Hide the paragraph text and headings by default */
-.timeline-card h2,
-.timeline-card h3,
-.timeline-card p {
-  display: none;
-}
-
-/* On hover: hide the image, show the content */
-.timeline-card:hover .card-img {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.timeline-card:hover h2,
-.timeline-card:hover h3,
-.timeline-card:hover p {
-  display: block;
-}
-
-/* Show paragraph ONLY when hovered with mouse or expanded */
-.timeline-card p {
-  display: none;
-}
-.timeline-card:hover p,
-.timeline-card.expanded p {
-  display: block;
-}
-
-/* Prevent keyboard focus (arrow key selection) from showing paragraph unless expanded */
-.timeline-card:focus:not(.expanded) p {
-  display: none;
-}
-
-/* If you also want headings always visible, remove their hiding:
-   Uncomment below if desired for constant heading visibility.
-   .timeline-card h2,
-   .timeline-card h3 { display:block; } */
-
-/* Ensure expanded state reveals headings and paragraph */
-.timeline-card.expanded h2,
-.timeline-card.expanded h3,
-.timeline-card.expanded p {
-  display: block;
-}
-
-/* Card hover effect */
-.timeline-card:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  transform: translateY(-4px) scale(1.03);
-  z-index: 1;
-}
-
-/* Smoother transitions for cards */
-.timeline-card {
-  /* ...existing code... */
-  will-change: transform, box-shadow, opacity;
-  transition: transform 0.55s cubic-bezier(.16,.84,.44,1),
-             box-shadow 0.55s cubic-bezier(.16,.84,.44,1),
-             background 0.60s ease,
-             opacity 0.45s ease;
-}
-
-/* Expanded (selected) state: a bit more scale for emphasis */
-.timeline-card.expanded {
-  transform: translateY(-6px) scale(1.06);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.22);
-  z-index: 2;
-}
-
-/* Keyboard focus: show a simple outline so selected card is clear */
-.timeline-card:focus {
-  outline: 3px solid #00AEEF;   /* Intel light blue */
+/* Focus outline for keyboard accessibility */
+.nav-links a:focus,
+.nav-cta:focus {
+  outline: 2px solid #7bbcff;
   outline-offset: 2px;
 }
 
-/* Fix: when card is expanded (via keyboard or click), do not blur the content */
-.timeline-card.expanded::after {
-  /* remove the frosted overlay that was blurring content */
-  content: none;
-}
-
-/* Soft glow overlay when expanded */
-.timeline-card.expanded::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(4px);
-  opacity: 0;
-  animation: expandGlow 0.60s ease forwards;
-}
-
-@keyframes expandGlow {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Smooth image fade when expanded */
-.timeline-card.expanded .card-img {
-  opacity: 0;
-}
-
-/* Timeline background softening when a card is expanded */
-.timeline.has-expanded {
-  background: rgba(255,255,255,0.42);
-  filter: drop-shadow(0 4px 22px rgba(0,0,0,0.15));
-  transition: background 0.60s ease, filter 0.60s ease;
-}
-
-/* Dark mode version of softened background */
-body.dark-mode .timeline.has-expanded {
-  background: rgba(36,40,56,0.60);
-  filter: drop-shadow(0 4px 26px rgba(0,0,0,0.40));
-}
-
-/* Remove overlays (card glow + softened timeline background) when keyboard arrow keys are used */
-.timeline.no-overlays .timeline-card.expanded::after {
-  content: none;               /* no glow / blur */
-}
-
-.timeline.no-overlays.has-expanded {
-  background: #ffffff;         /* keep original plain background */
-  filter: none;                /* remove drop shadow filter */
-}
-
-body.dark-mode .timeline.no-overlays.has-expanded {
-  background: #1f2a33;         /* plain dark background in dark mode */
-  filter: none;
-}
-
-/* Reduced motion accessibility: shorten transitions */
-@media (prefers-reduced-motion: reduce) {
-  .timeline-card,
-  .timeline-card .card-img,
-  .timeline-card.expanded,
-  .timeline.has-expanded {
-    transition: none;
-    animation: none;
-  }
-}
-
-/* Timeline instructions */
-.timeline-instructions {
-  text-align: center;
-  color: #003C6A;
-  font-size: 1rem;
-  margin: 18px 0 30px 0;
-  background: #ffffff;
-  border: 1px solid #e2e6ea;
-  border-radius: 18px;
-  padding: 8px 18px;
-  margin: 18px auto 30px auto;
-  width: fit-content;
-  box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  overflow: hidden;
-  max-height: 54px; /* initial compact height */
-  transition: max-height 0.5s ease, padding 0.5s ease, margin 0.5s ease;
-}
-/* Expand smoothly when a card is selected (timeline gets has-expanded) */
-.timeline.has-expanded ~ .timeline-instructions {
-  max-height: 120px;
-  padding: 12px 22px;
-  margin-top: 26px; /* gentle shift */
-}
-
-/* Arrow button styles */
-.timeline-arrow-btn {
-  background: #ffffff;
-  border: 1px solid #d9dee2;
-  color: #0068B5;
-  box-shadow: 0 2px 8px rgba(31, 38, 135, 0.10);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
-  transition: background 0.2s, color 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.timeline-arrow-btn:active {
-  background: #0068B5;
-  color: #fff;
-}
-
-/* Hide scroll bar for a cleaner look (optional for beginners) */
-.timeline {
-  scrollbar-width: thin;
-  scrollbar-color: #2566a8 #e0e0e0;
-}
-.timeline::-webkit-scrollbar {
-  height: 8px;
-}
-.timeline::-webkit-scrollbar-thumb {
-  background: #2566a8;
-  border-radius: 4px;
-}
-.timeline::-webkit-scrollbar-track {
-  background: #e0e0e0;
-  border-radius: 4px;
-}
-
-/* Light/Dark mode toggle button styling */
-.theme-toggle-btn {
-  position: fixed;
-  top: 70px;        /* push below the nav bar */
-  right: 18px;
-  z-index: 300;     /* higher than .site-nav (which is 200) */
-  background: #0068B5;
-  color: #fff;
-  border: 1px solid #005C9F;
-  border-radius: 20px;
-  padding: 8px 18px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  transition: background 0.2s, color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.theme-toggle-btn:active {
-  background: #004A86;
-}
-
-/* On small screens, give a bit more space below the nav */
-@media (max-width: 700px) {
-  .theme-toggle-btn {
-    top: 88px;
-  }
-  .hero {
-    padding-top: 32px;
-  }
-}
-
-/* Dark mode styles */
-body.dark-mode {
-  background: #121B24;
-  color: #e0e6eb;
-}
-
-/* Change hero section for dark mode */
-body.dark-mode .hero {
-  background: #003C6A;
-}
-body.dark-mode .hero::before {
-  background: rgba(0,0,0,0.35);
-}
-body.dark-mode .hero-desc {
-  color: #ffffff;
-}
-
-/* Change timeline background for dark mode */
-body.dark-mode .timeline {
-  background: #1f2a33;
-  border-color: #2e3c46;
-}
-
-/* Change timeline card for dark mode */
-body.dark-mode .timeline-card,
-body.dark-mode .highlight-card {
-  background: #1f2a33;
-  border-color: #2e3c46;
-  color: #cfe4ff;
-}
-body.dark-mode .timeline-card h2,
-body.dark-mode .highlight-card h2 {
-  color: #7bbcff;
-}
-body.dark-mode .timeline-card h3,
-body.dark-mode .highlight-card h3 {
-  color: #cfe4ff;
-}
-body.dark-mode .timeline-card p,
-body.dark-mode .highlight-card p {
-  color: #b9c8d6;
-}
-body.dark-mode .highlight-card {
-  background: #004A86;
-  border-color: #003C6A;
-}
-body.dark-mode .highlight-card h2,
-body.dark-mode .highlight-card h3 {
-  color: #ffffff;
-}
-body.dark-mode .highlight-card p {
-  color: #c7e0ff;
-}
-
-/* Change scroll bar color for dark mode */
-body.dark-mode .timeline {
-  scrollbar-color: #7bbcff #232a36;
-}
-body.dark-mode .timeline::-webkit-scrollbar-thumb {
-  background: #7bbcff;
-}
-body.dark-mode .timeline::-webkit-scrollbar-track {
-  background: #232a36;
-}
-
-/* Change arrow button color for dark mode */
-body.dark-mode .timeline-arrow-btn,
-body.dark-mode .theme-toggle-btn {
-  background: #1f2a33;
-  border-color: #2e3c46;
-  color: #7bbcff;
-}
-body.dark-mode .timeline-arrow-btn:active,
-body.dark-mode .theme-toggle-btn:active {
-  background: #004A86;
-  color: #fff;
-}
-
-/* Dark mode: Nav bar theme */
+/* Dark mode: same transparent style (inherits above) */
 body.dark-mode .site-nav {
-  background: #1f2a33;           /* dark surface */
-  border-bottom: 1px solid #2e3c46;
+  background: transparent;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
 }
-
 body.dark-mode .nav-links a {
-  color: #cfe4ff;                /* light link text */
+  color: #d5e6f3;
 }
 body.dark-mode .nav-links a:hover {
-  color: #7bbcff;                /* Intel light blue on hover */
+  color: #7bbcff;
+}
+
+/* (Optional) make the fixed theme toggle bar sit below nav visually */
+.theme-toggle-btn {
+  /* ...existing code... */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+}
+
+/* End nav fixes */
+
+/* === Intel-style nav: white sticky bar with simple flex layout === */
+.site-nav {
+  position: sticky;         /* stays at the top */
+  top: 0;
+  z-index: 200;
+  background: #ffffff;      /* white like Intel homepage */
+  border-bottom: 1px solid #e2e6ea;
+  backdrop-filter: none;    /* remove previous glass blur */
+  -webkit-backdrop-filter: none;
+}
+
+/* Inner layout: logo | links | CTA */
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Logo sizing */
+.nav-logo {
+  width: 70px;
+}
+
+/* Light mode: blue badge behind white SVG logo for visibility */
+.site-nav .nav-logo {
+  background: #0068B5;
+  padding: 6px;
+  border-radius: 6px;
+  display: block;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* Links row */
+.nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 24px;
+  flex: 1;                 /* push CTA to the right */
+}
+
+/* Link colors */
+.nav-links a {
+  color: #003C6A;
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 6px 4px;
+}
+.nav-links a:hover {
+  color: #0068B5;
   text-decoration: underline;
 }
 
-/* Dark mode: Learn More button styled to match */
+/* CTA button (solid Intel blue) */
+.nav-cta {
+  background: #0068B5;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.nav-cta:hover {
+  background: #004A86;
+}
+
+/* Keyboard focus */
+.nav-links a:focus,
+.nav-cta:focus {
+  outline: 2px solid #7bbcff;
+  outline-offset: 2px;
+}
+
+/* Dark mode: dark surface, thin divider, no badge behind logo */
+body.dark-mode .site-nav {
+  background: #1f2a33;
+  border-bottom: 1px solid #2e3c46;
+}
+body.dark-mode .site-nav .nav-logo {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+body.dark-mode .nav-links a {
+  color: #cfe4ff;
+}
+body.dark-mode .nav-links a:hover {
+  color: #7bbcff;
+}
 body.dark-mode .nav-cta {
   background: #004A86;
   color: #ffffff;
@@ -2021,422 +1109,283 @@ body.dark-mode .nav-cta:hover {
   background: #0068B5;
 }
 
-/* Always keep timeline horizontal */
-.timeline {
-  flex-wrap: nowrap;        /* never wrap */
-  overflow-x: auto;         /* allow sideways scrolling */
-}
-
-/* Mobile & tablets: keep horizontal scroll with fixed card width */
-@media (max-width: 900px) {
-  .timeline {
-    flex-wrap: nowrap;      /* override any earlier wrap */
-    overflow-x: auto;
-  }
-  .timeline-card {
-    flex: 0 0 240px;        /* fixed size for smooth horizontal scroll */
-    width: 240px;
-  }
-}
-
-/* Small phones: override earlier 88vw width rule */
-@media (max-width: 480px) {
-  .timeline {
-    flex-wrap: nowrap;
-  }
-  .timeline-card {
-    flex: 0 0 240px;
-    width: 240px;
-  }
-}
-
-/* Footer container */
+/* === Footer matches nav bar (light mode) === */
 .site-footer {
-  margin-top: 50px;
-  background: #003C6A;
-  position: relative;
-  color: #fff;
-  padding: 40px 20px 30px 20px;
-  overflow: hidden;
+  background: #ffffff;
+  border-top: 1px solid #e2e6ea;
+  color: #003C6A;
 }
-
-/* Frosted overlay for subtle glass effect */
 .site-footer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* remove previous frosted glass overlay for a clean look */
+  display: none;
 }
-
-.footer-inner {
-  position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-/* Branding */
-.footer-brand {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.footer-logo {
-  width: 80px;
-}
-
-.footer-tagline {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #f5faff;
-}
-
-/* Columns */
-.footer-columns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 28px;
-}
-
-.footer-col {
-  min-width: 140px;
-  flex: 1;
-}
-
-.footer-col h4 {
-  margin: 0 0 10px 0;
-  font-size: 1rem;
-  color: #ffffff;
-}
-
-.footer-col ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.footer-col li {
-  margin: 6px 0;
-}
-
-.footer-col a {
-  color: #f5faff;
+.site-footer a {
+  color: #003C6A;
   text-decoration: none;
-  font-size: 0.85rem;
+  font-weight: 500;
 }
-
-.footer-col a:hover {
+.site-footer a:hover {
   text-decoration: underline;
+  color: #0068B5;
 }
 
-/* Legal */
-.footer-legal {
-  border-top: 1px solid rgba(255,255,255,0.35);
-  padding-top: 14px;
-  font-size: 0.75rem;
-  color: #eef6ff;
-}
-
-.footer-legal a {
-  color: #eef6ff;
-  text-decoration: none;
-}
-
-.footer-legal a:hover {
-  text-decoration: underline;
-}
-
-/* Mobile */
-@media (max-width: 700px) {
-  .footer-columns {
-    flex-direction: column;
-  }
-  .footer-col {
-    width: 100%;
-  }
-}
-
-/* Dark mode footer adjustment */
+/* === Footer matches nav bar (dark mode) === */
 body.dark-mode .site-footer {
-  background: #003C6A;
-}
-body.dark-mode .site-footer::before {
-  background: rgba(0,0,0,0.35);
-}
-body.dark-mode .footer-col a,
-body.dark-mode .footer-tagline,
-body.dark-mode .footer-legal,
-body.dark-mode .footer-legal a {
+  background: #1f2a33;
+  border-top: 1px solid #2e3c46;
   color: #cfe4ff;
 }
-
-/* ================= Intel-inspired Theme Overrides (added at end) ================= */
-/* Body: lighter neutral background */
-body {
-  background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
-  color: #222;
-  font-family: Arial, sans-serif;
+body.dark-mode .site-footer a {
+  color: #cfe4ff;
 }
-
-/* Hero: solid Intel blue with subtle dark overlay for depth */
-.hero {
-  background: #0068B5;
-  position: relative;
-}
-.hero::before {
-  background: rgba(0,0,0,0.15);
-}
-.hero h1 {
-  letter-spacing: 0.5px;
-}
-.hero-underline {
-  border-color: #00AEEF;
-  background: #00AEEF;
-}
-.hero-desc {
-  color: #f5f5f5;
-}
-
-/* Navigation bar */
-.site-nav {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e6ea;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-}
-.nav-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 10px 18px;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-.nav-logo {
-  width: 70px;
-}
-.nav-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 24px;
-  flex: 1;
-}
-.nav-links a {
-  text-decoration: none;
-  color: #003C6A;
-  font-size: 0.9rem;
-  padding: 6px 4px;
-}
-.nav-links a:hover {
-  color: #0068B5;
+body.dark-mode .site-footer a:hover {
+  color: #7bbcff;
   text-decoration: underline;
 }
-.nav-cta {
-  background: #0068B5;
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  text-decoration: none; /* remove underline */
-  display: inline-block; /* keeps it button-like */
-}
-.nav-cta:hover {
-  background: #004A86;
-  color: #fff;
-  text-decoration: none; /* keep no underline on hover */
-}
-.nav-cta:focus,
-.nav-cta:active {
-  text-decoration: none; /* keep no underline on focus/active */
-}
 
-/* Light mode: add a blue badge behind the white nav logo so it’s visible */
-.site-nav .nav-logo {
-  background: #0068B5;  /* Intel blue */
-  padding: 6px;         /* small space around logo */
-  border-radius: 6px;   /* soft corners */
-  display: block;       /* stable layout */
+/* === Footer readability improvements (match nav bar) === */
+.site-footer .footer-logo {
+  background: #0068B5;        /* blue badge behind white logo */
+  padding: 6px;
+  border-radius: 6px;
+  display: block;
   box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
-/* Dark mode: no badge needed because the nav is dark */
-body.dark-mode .site-nav .nav-logo {
-  background: transparent;
+.site-footer .footer-tagline {
+  color: #003C6A;             /* dark Intel blue for contrast */
+  font-weight: 600;
+}
+
+.site-footer .footer-legal {
+  color: #003C6A;             /* ensure legal text is readable */
+}
+
+body.dark-mode .site-footer .footer-logo {
+  background: transparent;    /* remove badge in dark mode */
+  padding: 0;
   box-shadow: none;
 }
 
-/* Timeline container background simplified */
+body.dark-mode .site-footer .footer-tagline,
+body.dark-mode .site-footer .footer-legal {
+  color: #cfe4ff;             /* light text on dark background */
+}
+/* === End footer readability improvements === */
+
+/* Unified hero + timeline container */
+.hero-timeline {
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 24px;      /* keep original hero top spacing */
+}
+
+/* Remove extra gap now that sections are combined */
+.hero {
+  margin-bottom: 0;
+}
+
+/* Optional: slight spacing above timeline inside combined container */
+.hero-timeline .timeline-wrapper {
+  margin-top: 24px;
+}
+
+/* Extra space below the hero so the timeline is not tight against it */
+.hero {
+  /* only adding bottom margin (other hero styles unchanged) */
+  margin-bottom: 46px; /* adjust value as desired */
+}
+
+/* Small screens: a bit less space to save vertical room */
+@media (max-width: 700px) {
+  .hero {
+    margin-bottom: 32px;
+  }
+}
+
+/* === Timeline: enforce oval container and clamp card height === */
 .timeline {
-  background: #ffffff;
-  border: 1px solid #e2e6ea;
-  border-radius: 12px;
-  padding: 30px 0 18px 0;
+  /* Oval outline + clip anything that extends past the curve */
+  border-radius: 300px;
+  padding: 24px 0;                 /* balanced top/bottom space */
+  overflow: hidden;                 /* keep content inside the oval */
+  border: 1px solid #e2e6ea;       /* subtle outline in light mode */
+  background: transparent;         /* keep same background as page */
 }
 
-/* Cards: flat white, subtle border, soft shadow */
+/* Dark mode outline */
+body.dark-mode .timeline {
+  border-color: #2e3c46;
+}
+
+/* Cards never taller than the timeline's inner area */
 .timeline-card {
-  background: #ffffff;
-  border: 1px solid #d9dee2;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  color: #003C6A;
-  border-radius: 28px;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
-  border: 1.5px solid #b8b8b8;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  flex: 0 0 240px; /* Do not shrink, fixed width */
-  margin: 0 0 20px 0;
-  padding: 0 0 16px 0;
-  text-align: left;
-  transition: box-shadow 0.2s, transform 0.2s;
-  position: relative;
-  min-height: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  overflow: hidden;
-  will-change: transform, box-shadow, opacity;
-  transition: transform 0.55s cubic-bezier(.16,.84,.44,1),
-             box-shadow 0.55s cubic-bezier(.16,.84,.44,1),
-             background 0.60s ease,
-             opacity 0.45s ease;
+  height: 300px;                   /* fixed, uniform height */
+  min-height: auto;                /* override earlier min-height */
+  overflow: hidden;                /* clip extra content if needed */
 }
 
-/* Highlighted card (keep border-radius slightly larger for distinction if desired) */
-.highlight-card {
+/* Small phones: slightly shorter cards to save space */
+@media (max-width: 480px) {
+  .timeline-card {
+    height: 260px;
+  }
+}
+
+/* === Light/Dark mode: make the hero + timeline band match the nav and footer === */
+/* Light mode: white surface with thin dividers */
+.hero-timeline {
+  /* Simple white background so it matches the nav and footer */
+  background: #ffffff;
+  border-top: 1px solid #e2e6ea;
+  border-bottom: 1px solid #e2e6ea;
+}
+
+/* Make hero text readable on the light background */
+.hero h1,
+.hero .hero-desc {
+  color: #003C6A; /* Intel dark blue for contrast */
+}
+
+/* Dark mode: dark surface with thin dividers to match dark nav/footer */
+body.dark-mode .hero-timeline {
+  background: #1f2a33;
+  border-top: 1px solid #2e3c46;
+  border-bottom: 1px solid #2e3c46;
+}
+
+/* Keep hero text light on dark background */
+body.dark-mode .hero h1,
+body.dark-mode .hero .hero-desc {
+  color: #cfe4ff;
+}
+
+/* === Hero logo visibility on light/dark backgrounds === */
+/* Light mode: add a blue badge so the white SVG logo is visible on white */
+.hero .intel-logo {
+  /* simple blue background behind the white logo */
   background: #0068B5;
-  border: 1px solid #005C9F;
-  color: #ffffff;
-  border-radius: 32px;
-}
-
-/* Card heading styles */
-.timeline-card h2,
-.highlight-card h2 {
-  font-size: 1.3rem;
-  color: #0068B5;
-  margin: 0 0 4px 0;
-  font-weight: bold;
-}
-
-/* Make the "1985" on card 4 (highlight-card) a special color in both light and dark mode */
-.highlight-card h2 {
-  color: #7bbcff;
-}
-
-.timeline-card h3 {
-  font-size: 1.05rem;
-  margin: 0 0 10px 0;
-  font-weight: bold;
-  color: #003C6A;
-}
-
-.highlight-card h2,
-.highlight-card h3 {
-  color: #ffffff;
-}
-
-/* Card image styling - fill the entire card */
-.card-img {
-  width: 100%;
-  height: 100%;
-  min-height: 180px;
-  max-height: 220px;
-  object-fit: cover;
-  border-radius: 18px 18px 0 0;
-  margin: 0;
-  background: #e0e0e0;
+  padding: 6px;              /* small space around the logo */
+  border-radius: 6px;        /* soft corners like the nav/footer badges */
   display: block;
-  transition: opacity 0.50s ease;
-  /* Place image at the top of the card */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
-/* Make the card content stack vertically */
-.timeline-card {
-  /* ...existing code... */
+/* Dark mode: remove the badge so it blends with the dark background */
+body.dark-mode .hero .intel-logo {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* === Expanded card should pop outside of the oval timeline === */
+/* When a card is selected, allow content to extend beyond the oval */
+.timeline.has-expanded {
+  overflow: visible;                 /* allow vertical pop-out */
+  background: transparent !important;/* remove softened bg */
+  filter: none !important;           /* remove extra shadow filter */
+}
+body.dark-mode .timeline.has-expanded {
+  background: transparent !important;
+  filter: none !important;
+}
+
+/* Remove blurry/glass overlays everywhere in the timeline area */
+.timeline-card,
+.timeline-arrow-btn {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Ensure no glow/blur overlay appears on expanded cards */
+.timeline-card.expanded::after {
+  content: none !important; /* kill the overlay */
+}
+
+/* Keep the stronger lift for the selected card (visible pop-out) */
+.timeline-card.expanded {
+  transform: translateY(-38px) scale(1.06);
+  height: 360px;
+  z-index: 5;
+}
+
+/* Small phones: slightly smaller lift */
+@media (max-width: 480px) {
+  .timeline-card.expanded {
+    transform: translateY(-24px) scale(1.04);
+    height: 320px;
+  }
+}
+
+/* If keyboard "no-overlays" mode is used anywhere, still allow pop-out */
+.timeline.no-overlays.has-expanded {
+  overflow: visible;
+  background: transparent !important;
+  filter: none !important;
+}
+
+/* === One-at-a-time timeline NOW shows up to 4 cards === */
+/* Hide all cards by default */
+.timeline .timeline-card {
+  display: none;
+}
+/* Cards marked is-visible (up to 4) are shown */
+.timeline .timeline-card.is-visible {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0 0 16px 0;
-  overflow: hidden;
 }
 
-/* Place headings and text inside a content wrapper for easier hiding/showing */
-.timeline-card-content {
-  padding: 18px 16px 16px 16px;
-  width: 100%;
-  box-sizing: border-box;
+/* Keep the selected card able to pop outside the oval, but no overlays */
+.timeline.has-expanded {
+  overflow: visible;                 /* allow vertical pop-out */
+  background: transparent !important;/* remove softened bg */
+  filter: none !important;           /* remove extra shadow filter */
+}
+body.dark-mode .timeline.has-expanded {
+  background: transparent !important;
+  filter: none !important;
 }
 
-/* Hide the paragraph text and headings by default */
-.timeline-card h2,
-.timeline-card h3,
-.timeline-card p {
-  display: none;
+/* Remove blurry/glass overlays everywhere in the timeline area */
+.timeline-card,
+.timeline-arrow-btn {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
-/* On hover: hide the image, show the content */
-.timeline-card:hover .card-img {
-  opacity: 0;
-  pointer-events: none;
+/* Ensure no glow/blur overlay appears on expanded cards */
+.timeline-card.expanded::after {
+  content: none !important; /* kill the overlay */
 }
 
-.timeline-card:hover h2,
-.timeline-card:hover h3,
-.timeline-card:hover p {
-  display: block;
+/* Keep the stronger lift for the selected card (visible pop-out) */
+.timeline-card.expanded {
+  transform: translateY(-38px) scale(1.06);
+  height: 360px;
+  z-index: 5;
 }
 
-/* Show paragraph ONLY when hovered with mouse or expanded */
-.timeline-card p {
-  display: none;
+/* Small phones: slightly smaller lift */
+@media (max-width: 480px) {
+  .timeline-card.expanded {
+    transform: translateY(-24px) scale(1.04);
+    height: 320px;
+  }
 }
-.timeline-card:hover p,
+
+/* === Full description visibility when a card is selected === */
+/* Allow the expanded card to grow as tall as needed */
+.timeline-card.expanded {
+  height: auto;          /* override earlier fixed 360px */
+  min-height: 360px;     /* keeps a baseline size */
+  overflow: visible;     /* let content show */
+}
+
+/* Ensure inner content is not clipped */
+.timeline-card.expanded .timeline-card-content {
+  overflow: visible;
+}
+
+/* (Optional) If some paragraphs are still hidden by earlier rules, force display */
 .timeline-card.expanded p {
   display: block;
 }
-
-/* Prevent keyboard focus (arrow key selection) from showing paragraph unless expanded */
-.timeline-card:focus:not(.expanded) p {
-  display: none;
-}
-
-/* If you also want headings always visible, remove their hiding:
-   Uncomment below if desired for constant heading visibility.
-   .timeline-card h2,
-   .timeline-card h3 { display:block; } */
-
-/* Ensure expanded state reveals headings and paragraph */
-.timeline-card.expanded h2,
-.timeline-card.expanded h3,
-.timeline-card.expanded p {
-  display: block;
-}
-
-/* Card hover effect */
-.timeline-card:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  transform: translateY(-4px) scale(1.03);
-  z-index: 1;
-}
-
-/* Smoother transitions for cards */
-.timeline-card {
-  /* ...existing code... */
-  will-change: transform, box-shadow, opacity;
-  transition: transform 0.55s cubic-bezier(.16,.84,.44,1),
-             box-shadow 0.55s cubic-bezier(.16,.84,.44,1),
-             background 0.60s ease,
-             opacity 0.45s
