@@ -5,8 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Intel: Sustainability Through the Ages</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Favicon: this uses the provided image -->
+  <link rel="icon" type="image/png" href="img/intel logo.png">
 </head>
 <body>
+  <!-- Simple top navigation (Intel-inspired) -->
+  <nav class="site-nav" aria-label="Main">
+    <div class="nav-inner">
+      <img src="img/intel-header-logo.svg" alt="Intel Logo" class="nav-logo">
+      <ul class="nav-links">
+        <li><a href="https://www.intel.com/content/www/us/en/products/overview.html">Products</a></li>
+        <li><a href="https://www.intel.com/content/www/us/en/customer-spotlight/overview.html">Solutions</a></li>
+        <li><a href="https://www.intel.com/content/www/us/en/support.html">Support</a></li>
+        <li><a href="https://www.intel.com/content/www/us/en/environment/sustainability.html">Sustainability</a></li>
+      </ul>
+      <!-- Use a link styled like a button -->
+      <a class="nav-cta" href="https://www.intel.com/content/www/us/en/homepage.html">Learn More</a>
+    </div>
+  </nav>
+
   <!-- Light/Dark mode toggle button -->
   <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle light and dark mode">
     <!-- Icon and text will be set by JavaScript -->
@@ -197,29 +214,65 @@
       scrollAmount = Math.round(cardWidth + gap);
     }
 
-    // Scroll left when left arrow button is clicked
+    // Buttons still scroll by one card width when clicked
     leftBtn.addEventListener('click', function() {
-      // Prevent trying to scroll past the start
-      if (timeline.scrollLeft <= 0) return;
       timeline.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     });
-
-    // Scroll right when right arrow button is clicked
     rightBtn.addEventListener('click', function() {
       timeline.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     });
 
-    // Allow arrow keys to scroll the timeline
+    // Card selection helpers
+    const cards = Array.from(document.querySelectorAll('.timeline-card'));
+
+    function collapseAll() {
+      cards.forEach(c => {
+        c.classList.remove('expanded');
+        c.setAttribute('aria-expanded', 'false');
+      });
+      timeline.classList.remove('has-expanded'); // remove softened background
+      timeline.classList.remove('no-overlays'); // remove keyboard overlay override
+    }
+
+    function selectCard(index) {
+      if (index < 0 || index >= cards.length) return;
+      collapseAll();
+      const card = cards[index];
+      card.classList.add('expanded');
+      card.setAttribute('aria-expanded', 'true');
+      timeline.classList.add('has-expanded'); // soften background when one is active
+      timeline.classList.add('no-overlays'); // keyboard selection: remove overlays
+      card.focus();
+      card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    function findCurrentIndex() {
+      // prefer expanded card
+      const expandedIndex = cards.findIndex(c => c.classList.contains('expanded'));
+      if (expandedIndex !== -1) return expandedIndex;
+      // otherwise prefer focused card or element inside a card
+      const activeIndex = cards.findIndex(c => c === document.activeElement || c.contains(document.activeElement));
+      if (activeIndex !== -1) return activeIndex;
+      return -1;
+    }
+
+    // Keyboard: Left/Right arrows select previous/next card (and expand)
     document.addEventListener('keydown', function(event) {
-      if (event.key === 'ArrowLeft') {
-        if (timeline.scrollLeft <= 0) return;
-        timeline.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-      }
-      if (event.key === 'ArrowRight') {
-        timeline.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        event.preventDefault();
+        const current = findCurrentIndex();
+        let newIndex = 0;
+        if (current === -1) {
+          // if nothing selected, pick first for right, last for left
+          newIndex = event.key === 'ArrowRight' ? 0 : cards.length - 1;
+        } else {
+          newIndex = event.key === 'ArrowRight' ? Math.min(cards.length - 1, current + 1) : Math.max(0, current - 1);
+        }
+        selectCard(newIndex);
       }
     });
   </script>
+
   <!-- Smooth expand/collapse when a card is selected -->
   <script>
     // Make timeline cards clickable and keyboard-accessible
@@ -228,19 +281,19 @@
     // Helper: expand a card and collapse others
     function toggleExpand(card) {
       const willExpand = !card.classList.contains('expanded');
-
-      // Collapse all cards first
       cards.forEach(c => {
         c.classList.remove('expanded');
         c.setAttribute('aria-expanded', 'false');
       });
-
-      // Expand the clicked one (if it was not already expanded)
       if (willExpand) {
         card.classList.add('expanded');
         card.setAttribute('aria-expanded', 'true');
-        // Scroll the expanded card into view smoothly
+        timeline.classList.add('has-expanded');
+        // Click expansion: restore overlays
+        timeline.classList.remove('no-overlays');
         card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      } else {
+        timeline.classList.remove('has-expanded');
       }
     }
 
@@ -276,6 +329,8 @@
           c.classList.remove('expanded');
           c.setAttribute('aria-expanded', 'false');
         });
+        // Click outside: collapse and restore normal state
+        timeline.classList.remove('no-overlays');
       }
     });
   </script>
@@ -308,6 +363,25 @@
     // Set initial icon and text
     updateThemeButton();
   </script>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="img/intel-header-logo.svg" alt="Intel Logo" class="footer-logo">
+        <p class="footer-tagline">Advancing technology for a sustainable future.</p>
+      </div>
+      <div class="footer-legal">
+        <p>&copy; 2025 Intel (Demo Educational Page). All rights reserved.</p>
+        <p>
+          <a href="https://www.intel.com/content/www/us/en/privacy/intel-privacy-notice.html">Privacy</a>
+          ·
+          <a href="https://www.intel.com/content/www/us/en/legal/terms-of-use.html">Terms</a>
+          ·
+          <a href="https://www.intel.com/content/www/us/en/privacy/intel-cookie-notice.html">Cookies</a>
+        </p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
 
