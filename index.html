@@ -317,6 +317,70 @@
     updateThemeButton();
   </script>
 
+  <!-- Mobile swipe enhancements -->
+  <script>
+    (function() {
+      const timeline = document.getElementById('timeline');
+      const leftBtn = document.getElementById('timeline-left');
+      const rightBtn = document.getElementById('timeline-right');
+      const cards = Array.from(timeline.querySelectorAll('.timeline-card'));
+
+      function isMobile() {
+        return window.innerWidth <= 700;
+      }
+
+      function applyMobileMode() {
+        if (!isMobile()) return;
+        // Show all cards, treat currentIndex as highlight only
+        cards.forEach(c => c.classList.add('is-visible'));
+        // Make sure expanded styles show content
+        cards.forEach((c,i) => {
+          c.classList.toggle('expanded', i === currentIndex);
+          c.setAttribute('aria-expanded', i === currentIndex ? 'true' : 'false');
+        });
+      }
+
+      // Scroll to next/prev full card width on mobile
+      function scrollCard(direction) {
+        if (!isMobile()) return;
+        const width = timeline.clientWidth;
+        timeline.scrollBy({ left: direction * width, behavior: 'smooth' });
+      }
+
+      // Override existing arrow handlers for mobile swipe
+      leftBtn.addEventListener('click', () => {
+        if (isMobile()) {
+          currentIndex = Math.max(0, currentIndex - 1);
+          applyMobileMode();
+          scrollCard(-1);
+        }
+      });
+      rightBtn.addEventListener('click', () => {
+        if (isMobile()) {
+          currentIndex = Math.min(cards.length - 1, currentIndex + 1);
+          applyMobileMode();
+          scrollCard(1);
+        }
+      });
+
+      // Card tap sets focus/expansion on mobile
+      cards.forEach((card,i) => {
+        card.addEventListener('click', () => {
+          if (!isMobile()) return;
+          currentIndex = i;
+          applyMobileMode();
+          card.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        });
+      });
+
+      // Re-apply on resize
+      window.addEventListener('resize', applyMobileMode);
+
+      // Initial check
+      applyMobileMode();
+    })();
+  </script>
+
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
