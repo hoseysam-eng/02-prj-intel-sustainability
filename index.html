@@ -235,10 +235,9 @@
         card.classList.toggle('is-visible', inWindow);
         const isActive = i === currentIndex;
         card.classList.toggle('expanded', isActive);
-        card.setAttribute('aria-expanded', String(isActive));
+        // Remove aria-expanded (not needed for divs)
         card.tabIndex = isActive ? 0 : -1;
       });
-
       timeline.classList.add('has-expanded');
       // Focus active card for accessibility
       timelineCards[currentIndex].focus();
